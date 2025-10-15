@@ -13,7 +13,9 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-      
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -29,10 +31,10 @@ jobs:
     - name: Cleanup expired jobs
       run: node scripts/cleanup-expired.js
       
-    - name: Commit and push if changed
+    - name: Commit and push changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add -A
-        git diff --staged --quiet || git commit -m "Update job listings"
+        git add .
+        git diff --cached --quiet || git commit -m "🔄 Auto-update job listings [skip ci]"
         git push
