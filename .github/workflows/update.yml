@@ -1,5 +1,7 @@
-name: Update Jobs
+name: Auto Update Jobs
 on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:
 
 permissions:
@@ -9,17 +11,27 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Create jobs data
-        run: |
-          mkdir -p data
-          echo '[]' > data/jobs.json
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
           
-      - name: Commit
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Scrape jobs from RSS feeds
+        run: node scripts/scraper.js
+        
+      - name: Remove expired jobs
+        run: node scripts/cleanup.js
+        
+      - name: Commit updates
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "Create jobs file" || true
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add data/jobs.json
+          git commit -m "🤖 Auto-update job data" || echo "No changes"
           git push
