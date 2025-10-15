@@ -1,11 +1,29 @@
 [
   {
-    "title": "System Test Job",
-    "company": "Job Board System", 
-    "description": "Your automatic job board is working! Real jobs will appear after the first update.",
-    "url": "https://github.com",
-    "source": "System",
-    "date": "2024-01-01T00:00:00.000Z",
-    "expires": "2024-12-31T00:00:00.000Z"
+    "title": "Senior Web Developer - Remote",
+    "company": "Tech Solutions Inc",
+    "description": "Full-time remote position for experienced developer with React/Node.js",
+    "url": "https://remoteok.io",
+    "source": "RemoteOK",
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")"
+  },
+  {
+    "title": "Frontend Developer",
+    "company": "Digital Creative Agency", 
+    "description": "Remote frontend role focusing on modern JavaScript frameworks",
+    "url": "https://weworkremotely.com",
+    "source": "WeWorkRemotely",
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")"
+  },
+  {
+    "title": "Full Stack Engineer",
+    "company": "StartupXYZ",
+    "description": "Full remote position with competitive salary and benefits",
+    "url": "https://justremote.co",
+    "source": "JustRemote",
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")", 
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")"
   }
 ]
