@@ -1,0 +1,53 @@
+name: Update Jobs
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
+      - name: Create jobs data
+        run: |
+          mkdir -p data
+          echo '[
+            {
+              "title": "Senior Web Developer (Remote)",
+              "company": "Tech Solutions Inc", 
+              "description": "Full-time remote position for experienced developer. React/Node.js required.",
+              "url": "https://example.com/job1",
+              "source": "RemoteOK",
+              "date": "'$(date -Iseconds)'",
+              "expires": "'$(date -Iseconds -d "+7 days")'"
+            },
+            {
+              "title": "Frontend Developer",
+              "company": "Digital Agency Co",
+              "description": "Remote frontend developer position. Vue.js experience preferred.",
+              "url": "https://example.com/job2",
+              "source": "WeWorkRemotely", 
+              "date": "'$(date -Iseconds)'",
+              "expires": "'$(date -Iseconds -d "+7 days")'"
+            },
+            {
+              "title": "Full Stack Engineer",
+              "company": "StartupXYZ",
+              "description": "Full remote position with modern tech stack. Competitive salary.",
+              "url": "https://example.com/job3",
+              "source": "JustRemote",
+              "date": "'$(date -Iseconds)'", 
+              "expires": "'$(date -Iseconds -d "+7 days")'"
+            }
+          ]' > data/jobs.json
+          
+      - name: Commit and push
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add data/jobs.json
+          git commit -m "Add sample jobs" || exit 0
+          git push
