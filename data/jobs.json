@@ -1,0 +1,11 @@
+[
+  {
+    "title": "System Test Job",
+    "company": "Job Board System", 
+    "description": "Your automatic job board is working! Real jobs will appear after the first update.",
+    "url": "https://github.com",
+    "source": "System",
+    "date": "2024-01-01T00:00:00.000Z",
+    "expires": "2024-12-31T00:00:00.000Z"
+  }
+]
