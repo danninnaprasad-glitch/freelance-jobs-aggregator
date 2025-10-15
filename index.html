@@ -1,48 +1,72 @@
-<script>
-    // Try multiple paths to find the jobs file
-    async function loadJobs() {
-        const paths = [
-            './data/jobs.json',
-            'data/jobs.json', 
-            '/data/jobs.json',
-            'https://raw.githubusercontent.com/<YOUR_USERNAME>/<YOUR_REPO>/main/data/jobs.json'
-        ];
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Freelance Jobs</title>
+    <style>
+        body { font-family: Arial; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .job { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Freelance Job Aggregator</h1>
+    <div id="status">Checking for jobs...</div>
+    <div id="jobs"></div>
+
+    <script>
+        // Replace these with your actual GitHub details
+        const username = 'YOUR_GITHUB_USERNAME';
+        const repo = 'YOUR_REPO_NAME';
         
-        for (const path of paths) {
+        const jobsUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/data/jobs.json`;
+        const backupUrl = './data/jobs.json';
+        
+        async function loadJobs() {
             try {
-                console.log('Trying path:', path);
-                const response = await fetch(path);
-                if (response.ok) {
-                    const jobs = await response.json();
-                    displayJobs(jobs);
-                    return;
-                }
+                // Try direct GitHub raw URL first
+                let response = await fetch(jobsUrl);
+                if (!response.ok) throw new Error('First attempt failed');
+                
+                const jobs = await response.json();
+                showJobs(jobs);
+                
             } catch (error) {
-                console.log('Failed:', path);
+                // Fallback to relative path
+                try {
+                    const response = await fetch(backupUrl);
+                    const jobs = await response.json();
+                    showJobs(jobs);
+                } catch (error2) {
+                    showError();
+                }
             }
         }
         
-        // If all paths fail, show message
-        document.getElementById('jobs').innerHTML = 
-            '<p>Jobs will load after first update. Check back in 10 minutes.</p>';
-    }
-
-    function displayJobs(jobs) {
-        const container = document.getElementById('jobs');
-        if (jobs.length === 0) {
-            container.innerHTML = '<p>No jobs found yet. First update in progress...</p>';
-        } else {
-            container.innerHTML = jobs.map(job => `
-                <div class="job">
-                    <h3>${job.title || 'No title'}</h3>
-                    <p><strong>Company:</strong> ${job.company || 'Unknown'}</p>
-                    <p>${job.description || 'No description'}</p>
-                    <a href="${job.url || '#'}" target="_blank">Apply Now</a>
-                </div>
-            `).join('');
+        function showJobs(jobs) {
+            document.getElementById('status').innerHTML = `Found ${jobs.length} jobs`;
+            
+            if (jobs.length === 0) {
+                document.getElementById('jobs').innerHTML = '<p>No jobs available yet. Check back later.</p>';
+            } else {
+                document.getElementById('jobs').innerHTML = jobs.map(job => `
+                    <div class="job">
+                        <h3>${job.title}</h3>
+                        <p><strong>Company:</strong> ${job.company}</p>
+                        <p>${job.description}</p>
+                        <a href="${job.url}" target="_blank">Apply Now</a>
+                    </div>
+                `).join('');
+            }
         }
-    }
-
-    // Load jobs when page loads
-    loadJobs();
-</script>
+        
+        function showError() {
+            document.getElementById('status').innerHTML = 'Waiting for first job update...';
+            document.getElementById('jobs').innerHTML = `
+                <p>The system is setting up. Jobs will appear within 10 minutes.</p>
+                <p>Make sure the workflow has run in the Actions tab.</p>
+            `;
+        }
+        
+        loadJobs();
+    </script>
+</body>
+</html>
