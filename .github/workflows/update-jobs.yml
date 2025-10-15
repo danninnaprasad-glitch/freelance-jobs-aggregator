@@ -1,16 +1,37 @@
 name: Update Jobs
 on:
-  schedule: [{cron: '0 */6 * * *'}]
-  workflow_dispatch: {}
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-      - run: |
+      
+      - name: Create sample jobs
+        run: |
           mkdir -p data
-          echo '[{"title":"Test Job","company":"Test Co","url":"https://example.com"}]' > data/jobs.json
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-          git add . && git commit -m "Update jobs" && git push
+          echo '[{
+            "title": "Senior Frontend Developer",
+            "company": "TechCorp",
+            "description": "Remote frontend position with React",
+            "url": "https://example.com/job1",
+            "source": "RemoteOK"
+          }, {
+            "title": "Full Stack Engineer", 
+            "company": "StartupXYZ",
+            "description": "Full remote full-stack role",
+            "url": "https://example.com/job2",
+            "source": "WeWorkRemotely"
+          }]' > data/jobs.json
+          
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/jobs.json
+          git commit -m "Update job listings" || exit 0
+          git push
