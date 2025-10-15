@@ -1,7 +1,7 @@
 name: Update Jobs
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:
   push:
     branches: [main]
@@ -18,42 +18,24 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create jobs with proper URLs
-        run: |
-          mkdir -p data
-          cat > data/jobs.json << 'EOF'
-          [
-            {
-              "title": "Senior Frontend Developer (Remote)",
-              "company": "Tech Innovations Inc",
-              "description": "Looking for an experienced React developer for full-time remote position. Must have 3+ years experience.",
-              "url": "https://remoteok.io/remote-jobs/example1",
-              "source": "RemoteOK",
-              "date": "$(date -Iseconds)"
-            },
-            {
-              "title": "Full Stack Engineer", 
-              "company": "StartupXYZ",
-              "description": "Full remote full-stack role with modern technologies including Node.js, React, and AWS.",
-              "url": "https://weworkremotely.com/remote-jobs/example2", 
-              "source": "WeWorkRemotely",
-              "date": "$(date -Iseconds)"
-            },
-            {
-              "title": "UX/UI Designer",
-              "company": "Creative Solutions",
-              "description": "Remote design position focusing on user experience and interface design for web applications.",
-              "url": "https://justremote.co/design-jobs/example3",
-              "source": "JustRemote",
-              "date": "$(date -Iseconds)"
-            }
-          ]
-          EOF
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run improved job scraper
+        run: node scripts/scraper.js
+
+      - name: Cleanup expired jobs
+        run: node scripts/cleanup.js
 
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add data/jobs.json
-          git commit -m "🔄 Update job listings - $(date)" || echo "No changes to commit"
+          git commit -m "🔄 Auto-update: $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
           git push
