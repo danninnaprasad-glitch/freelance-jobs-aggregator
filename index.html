@@ -2,17 +2,35 @@
 <html>
 <head>
     <title>Freelance Jobs</title>
-    <style>body{font-family:Arial;max-width:800px;margin:0 auto;padding:20px;}</style>
+    <style>
+        body { font-family: Arial; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .job { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    </style>
 </head>
 <body>
-    <h1>Freelance Job Aggregator</h1>
+    <h1>🚀 Freelance Job Aggregator</h1>
+    <p>Jobs update automatically every 6 hours</p>
     <div id="jobs">Loading jobs...</div>
+
     <script>
-        fetch('./data/jobs.json')
-            .then(r => r.json())
+        fetch('https://raw.githubusercontent.com/USERNAME/REPO-NAME/main/data/jobs.json')
+            .then(response => response.json())
             .then(jobs => {
-                document.getElementById('jobs').innerHTML = 
-                    jobs.map(job => `<div><h3>${job.title}</h3><p>${job.company}</p><a href="${job.url}">Apply</a></div>`).join('');
+                if (jobs.length === 0) {
+                    document.getElementById('jobs').innerHTML = '<p>No jobs found yet. First update in progress...</p>';
+                } else {
+                    document.getElementById('jobs').innerHTML = jobs.map(job => `
+                        <div class="job">
+                            <h3>${job.title}</h3>
+                            <p><strong>Company:</strong> ${job.company}</p>
+                            <p>${job.description}</p>
+                            <a href="${job.url}" target="_blank">Apply Now</a>
+                        </div>
+                    `).join('');
+                }
+            })
+            .catch(error => {
+                document.getElementById('jobs').innerHTML = '<p>Loading jobs for the first time. Please wait...</p>';
             });
     </script>
 </body>
