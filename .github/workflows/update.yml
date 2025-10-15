@@ -1,8 +1,6 @@
 name: Update Jobs
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 */6 * * *'
 
 permissions:
   contents: write
@@ -11,52 +9,17 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create jobs directory
-        run: mkdir -p data
-
-      - name: Create jobs file
+      - uses: actions/checkout@v4
+      
+      - name: Create jobs data
         run: |
-          cat > data/jobs.json << 'EOF'
-          [
-            {
-              "title": "Senior Web Developer - Remote",
-              "company": "Tech Solutions Inc",
-              "description": "Full-time remote position for experienced developer with React/Node.js",
-              "url": "https://remoteok.io",
-              "source": "RemoteOK",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")"
-            },
-            {
-              "title": "Frontend Developer",
-              "company": "Digital Creative Agency", 
-              "description": "Remote frontend role focusing on modern JavaScript frameworks",
-              "url": "https://weworkremotely.com",
-              "source": "WeWorkRemotely",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")"
-            },
-            {
-              "title": "Full Stack Engineer",
-              "company": "StartupXYZ",
-              "description": "Full remote position with competitive salary and benefits",
-              "url": "https://justremote.co",
-              "source": "JustRemote",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")", 
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")"
-            }
-          ]
-          EOF
-
-      - name: Commit and Push changes
+          mkdir -p data
+          echo '[]' > data/jobs.json
+          
+      - name: Commit
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add data/jobs.json
-          git commit -m "Update job listings" || echo "No changes to commit"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Create jobs file" || true
           git push
