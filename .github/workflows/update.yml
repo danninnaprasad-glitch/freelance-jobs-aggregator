@@ -4,50 +4,59 @@ on:
   schedule:
     - cron: '0 */6 * * *'
 
+permissions:
+  contents: write
+
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
-        
-      - name: Create jobs data
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create jobs directory
+        run: mkdir -p data
+
+      - name: Create jobs file
         run: |
-          mkdir -p data
-          echo '[
+          cat > data/jobs.json << 'EOF'
+          [
             {
-              "title": "Senior Web Developer (Remote)",
-              "company": "Tech Solutions Inc", 
-              "description": "Full-time remote position for experienced developer. React/Node.js required.",
-              "url": "https://example.com/job1",
+              "title": "Senior Web Developer - Remote",
+              "company": "Tech Solutions Inc",
+              "description": "Full-time remote position for experienced developer with React/Node.js",
+              "url": "https://remoteok.io",
               "source": "RemoteOK",
-              "date": "'$(date -Iseconds)'",
-              "expires": "'$(date -Iseconds -d "+7 days")'"
+              "date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")"
             },
             {
               "title": "Frontend Developer",
-              "company": "Digital Agency Co",
-              "description": "Remote frontend developer position. Vue.js experience preferred.",
-              "url": "https://example.com/job2",
-              "source": "WeWorkRemotely", 
-              "date": "'$(date -Iseconds)'",
-              "expires": "'$(date -Iseconds -d "+7 days")'"
+              "company": "Digital Creative Agency", 
+              "description": "Remote frontend role focusing on modern JavaScript frameworks",
+              "url": "https://weworkremotely.com",
+              "source": "WeWorkRemotely",
+              "date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")"
             },
             {
               "title": "Full Stack Engineer",
               "company": "StartupXYZ",
-              "description": "Full remote position with modern tech stack. Competitive salary.",
-              "url": "https://example.com/job3",
+              "description": "Full remote position with competitive salary and benefits",
+              "url": "https://justremote.co",
               "source": "JustRemote",
-              "date": "'$(date -Iseconds)'", 
-              "expires": "'$(date -Iseconds -d "+7 days")'"
+              "date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")", 
+              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%SZ")"
             }
-          ]' > data/jobs.json
-          
-      - name: Commit and push
+          ]
+          EOF
+
+      - name: Commit and Push changes
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
           git add data/jobs.json
-          git commit -m "Add sample jobs" || exit 0
+          git commit -m "Update job listings" || echo "No changes to commit"
           git push
