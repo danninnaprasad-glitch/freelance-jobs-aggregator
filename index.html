@@ -3,96 +3,37 @@
 <head>
     <title>Freelance Jobs</title>
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        .job { 
-            background: white;
-            border: 1px solid #ddd; 
-            padding: 15px; 
-            margin: 10px 0; 
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .job h3 { color: #333; margin: 0 0 10px 0; }
-        .job p { margin: 5px 0; color: #666; }
-        .apply-btn { 
-            background: #28a745; 
-            color: white; 
-            padding: 8px 16px; 
-            text-decoration: none; 
-            border-radius: 4px;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .stats {
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .job { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <div class="stats">
-        <h1>🚀 Freelance Job Aggregator</h1>
-        <p><strong id="jobCount">0</strong> jobs available • Updated: <span id="lastUpdated">Just now</span></p>
+    <h1>🚀 Freelance Job Board</h1>
+    <p><strong>3</strong> jobs available • Updated: <span id="date">Just now</span></p>
+    
+    <div class="job">
+        <h3>Senior Web Developer - Remote</h3>
+        <p><strong>Company:</strong> Tech Solutions Inc</p>
+        <p>Full-time remote position for experienced developer with React/Node.js</p>
+        <a href="https://remoteok.io" target="_blank">Apply Now</a>
     </div>
-
-    <div id="jobs">Loading jobs...</div>
-
+    
+    <div class="job">
+        <h3>Frontend Developer</h3>
+        <p><strong>Company:</strong> Digital Creative Agency</p>
+        <p>Remote frontend role focusing on modern JavaScript frameworks</p>
+        <a href="https://weworkremotely.com" target="_blank">Apply Now</a>
+    </div>
+    
+    <div class="job">
+        <h3>Full Stack Engineer</h3>
+        <p><strong>Company:</strong> StartupXYZ</p>
+        <p>Full remote position with competitive salary and benefits</p>
+        <a href="https://justremote.co" target="_blank">Apply Now</a>
+    </div>
+    
     <script>
-        // Simple job loader
-        async function loadJobs() {
-            try {
-                // Try to load from GitHub raw URL
-                const username = 'YOUR_USERNAME';  // REPLACE THIS
-                const repo = 'YOUR_REPO_NAME';     // REPLACE THIS  
-                const url = `https://raw.githubusercontent.com/${username}/${repo}/main/data/jobs.json`;
-                
-                const response = await fetch(url);
-                const jobs = await response.json();
-                
-                displayJobs(jobs);
-            } catch (error) {
-                // If loading fails, show message
-                document.getElementById('jobs').innerHTML = 
-                    '<div class="job"><p>Jobs will appear here after the first automatic update (takes 5-10 minutes).</p></div>';
-            }
-        }
-
-        function displayJobs(jobs) {
-            const container = document.getElementById('jobs');
-            const countElement = document.getElementById('jobCount');
-            
-            if (!jobs || jobs.length === 0) {
-                container.innerHTML = '<div class="job"><p>No jobs available yet. The system is updating automatically.</p></div>';
-                countElement.textContent = '0';
-                return;
-            }
-
-            countElement.textContent = jobs.length;
-            
-            container.innerHTML = jobs.map(job => `
-                <div class="job">
-                    <h3>${job.title}</h3>
-                    <p><strong>Company:</strong> ${job.company}</p>
-                    <p>${job.description}</p>
-                    <a href="${job.url}" target="_blank" class="apply-btn">Apply Now</a>
-                </div>
-            `).join('');
-        }
-
-        // Load jobs when page opens
-        loadJobs();
-        
-        // Update time
-        document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+        document.getElementById('date').textContent = new Date().toLocaleString();
     </script>
 </body>
 </html>
