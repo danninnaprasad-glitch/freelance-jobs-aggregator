@@ -1,501 +1,168 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Freelance Job Aggregator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+<script>
+    // Replace these with your actual GitHub details
+    const username = 'YOUR_USERNAME';
+    const repo = 'YOUR_REPO_NAME';
+    
+    class JobAggregator {
+        constructor() {
+            this.jobs = [];
+            this.filteredJobs = [];
+            this.init();
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+        async init() {
+            await this.loadJobs();
+            this.renderJobs();
+            this.setupEventListeners();
+            this.updateStats();
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 40px 20px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        header h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        header p {
-            font-size: 1.2rem;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .stats {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            display: inline-block;
-            font-weight: bold;
-        }
-
-        .filters {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        #searchInput, #sourceFilter {
-            padding: 12px 15px;
-            border: 2px solid #e1e4e8;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        #searchInput:focus, #sourceFilter:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        #searchInput {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .jobs-container {
-            display: grid;
-            gap: 20px;
-        }
-
-        .job-card {
-            background: rgba(255, 255, 255, 0.95);
-            border: none;
-            border-radius: 15px;
-            padding: 30px;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .job-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .job-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            gap: 15px;
-        }
-
-        .job-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 8px;
-            line-height: 1.3;
-        }
-
-        .job-company {
-            font-weight: 600;
-            color: #667eea;
-            font-size: 1.1rem;
-        }
-
-        .job-source {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .job-description {
-            color: #4a5568;
-            margin-bottom: 20px;
-            line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .job-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            color: #718096;
-            padding-top: 15px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .apply-btn {
-            background: linear-gradient(135deg, #48bb78, #38a169);
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-block;
-            border: none;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-
-        .apply-btn:hover {
-            background: linear-gradient(135deg, #38a169, #2f855a);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
-        }
-
-        .no-jobs {
-            text-align: center;
-            padding: 60px 40px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .no-jobs h3 {
-            color: #2d3748;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
-
-        .no-jobs p {
-            color: #718096;
-            line-height: 1.6;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            padding: 30px;
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: white;
-            font-size: 1.1rem;
-        }
-
-        .loading-spinner {
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 3px solid white;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            header h1 {
-                font-size: 2.2rem;
-            }
-            
-            .filters {
-                flex-direction: column;
-            }
-            
-            #searchInput {
-                min-width: unset;
-            }
-            
-            .job-header {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .job-meta {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            
-            .apply-btn {
-                width: 100%;
-                text-align: center;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>🚀 Freelance Job Aggregator</h1>
-            <p>Discover genuine freelance opportunities updated automatically</p>
-            <div class="stats">
-                <span id="jobCount">0</span> active jobs • 
-                <span id="lastUpdated">Loading...</span>
-            </div>
-        </header>
-
-        <div class="filters">
-            <input type="text" id="searchInput" placeholder="🔍 Search jobs by title, company, or description...">
-            <select id="sourceFilter">
-                <option value="">All Sources</option>
-            </select>
-        </div>
-
-        <div id="jobsContainer">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <p>Loading job opportunities...</p>
-            </div>
-        </div>
-
-        <footer>
-            <p>🔄 Automatically updated every 6 hours • ⚡ Expired jobs removed automatically</p>
-            <p><small>Powered by GitHub Actions • Zero maintenance required</small></p>
-        </footer>
-    </div>
-
-    <script>
-        // Replace these with your actual GitHub details
-        const username = 'YOUR_USERNAME';  // Change this!
-        const repo = 'YOUR_REPO_NAME';     // Change this!
-        
-        class JobAggregator {
-            constructor() {
-                this.jobs = [];
-                this.filteredJobs = [];
-                this.init();
-            }
-
-            async init() {
-                await this.loadJobs();
-                this.renderJobs();
-                this.setupEventListeners();
-                this.updateStats();
-            }
-
-            async loadJobs() {
-                try {
-                    // Try multiple possible paths
-                    const paths = [
-                        `https://raw.githubusercontent.com/${username}/${repo}/main/data/jobs.json`,
-                        './data/jobs.json',
-                        '../data/jobs.json'
-                    ];
-                    
-                    let jobsData = null;
-                    
-                    for (const path of paths) {
-                        try {
-                            console.log('Trying path:', path);
-                            const response = await fetch(path);
-                            if (response.ok) {
-                                jobsData = await response.json();
-                                console.log('✅ Successfully loaded from:', path);
-                                break;
-                            }
-                        } catch (error) {
-                            console.log('❌ Failed:', path);
-                        }
-                    }
-                    
-                    if (jobsData && Array.isArray(jobsData)) {
-                        this.jobs = jobsData;
-                        this.filteredJobs = [...this.jobs];
-                        this.populateSourceFilter();
-                    } else {
-                        this.showError('No jobs available yet. The first automatic update is in progress. Please check back in 10-15 minutes.');
-                    }
-                } catch (error) {
-                    console.error('Error loading jobs:', error);
-                    this.showError('The system is setting up. Jobs will appear shortly after the first automatic update completes.');
-                }
-            }
-
-            populateSourceFilter() {
-                const sourceFilter = document.getElementById('sourceFilter');
-                const sources = [...new Set(this.jobs.map(job => job.source))];
+        async loadJobs() {
+            try {
+                const jobsUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/data/jobs.json`;
+                const response = await fetch(jobsUrl);
                 
-                // Clear existing options except the first one
-                while (sourceFilter.children.length > 1) {
-                    sourceFilter.removeChild(sourceFilter.lastChild);
+                if (response.ok) {
+                    this.jobs = await response.json();
+                    this.filteredJobs = [...this.jobs];
+                    this.populateSourceFilter();
+                    console.log(`✅ Loaded ${this.jobs.length} jobs`);
+                } else {
+                    this.showError('Jobs database is being updated. Please check back in 10 minutes.');
+                }
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                this.showError('System is updating. Jobs will appear shortly.');
+            }
+        }
+
+        populateSourceFilter() {
+            const sourceFilter = document.getElementById('sourceFilter');
+            const sources = [...new Set(this.jobs.map(job => job.source))];
+            
+            while (sourceFilter.children.length > 1) {
+                sourceFilter.removeChild(sourceFilter.lastChild);
+            }
+            
+            sources.forEach(source => {
+                const option = document.createElement('option');
+                option.value = source;
+                option.textContent = source;
+                sourceFilter.appendChild(option);
+            });
+        }
+
+        renderJobs() {
+            const container = document.getElementById('jobsContainer');
+            
+            if (this.filteredJobs.length === 0) {
+                container.innerHTML = '<div class="no-jobs">No jobs match your filters</div>';
+                return;
+            }
+
+            container.innerHTML = this.filteredJobs.map(job => {
+                // Validate and fix URL
+                let jobUrl = job.url || '#';
+                if (!jobUrl.startsWith('http')) {
+                    jobUrl = 'https://' + jobUrl;
                 }
                 
-                sources.forEach(source => {
-                    const option = document.createElement('option');
-                    option.value = source;
-                    option.textContent = source;
-                    sourceFilter.appendChild(option);
-                });
-            }
-
-            renderJobs() {
-                const container = document.getElementById('jobsContainer');
+                // Calculate days until expiry
+                const expires = new Date(job.expires);
+                const now = new Date();
+                const daysLeft = Math.ceil((expires - now) / (1000 * 60 * 60 * 24));
                 
-                if (this.filteredJobs.length === 0) {
-                    container.innerHTML = `
-                        <div class="no-jobs">
-                            <h3>No Jobs Found</h3>
-                            <p>No jobs match your current filters. Try adjusting your search criteria.</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                container.innerHTML = this.filteredJobs.map(job => {
-                    // Ensure URL is valid and clickable
-                    let jobUrl = job.url || '#';
-                    if (!jobUrl.startsWith('http')) {
-                        jobUrl = 'https://' + jobUrl;
-                    }
-                    
-                    return `
-                        <div class="job-card">
-                            <div class="job-header">
-                                <div>
-                                    <h3 class="job-title">${this.escapeHtml(job.title)}</h3>
-                                    <div class="job-company">${this.escapeHtml(job.company)}</div>
-                                </div>
-                                <span class="job-source">${this.escapeHtml(job.source)}</span>
+                return `
+                    <div class="job-card">
+                        <div class="job-header">
+                            <div>
+                                <h3 class="job-title">${this.escapeHtml(job.title)}</h3>
+                                <div class="job-company">${this.escapeHtml(job.company)}</div>
                             </div>
-                            <div class="job-description">${this.escapeHtml(job.description)}</div>
-                            <div class="job-meta">
-                                <span>Posted: ${new Date(job.date).toLocaleDateString()}</span>
-                                <a href="${jobUrl}" target="_blank" rel="noopener noreferrer" class="apply-btn">
-                                    Apply Now ›
-                                </a>
-                            </div>
+                            <span class="job-source">${this.escapeHtml(job.source)}</span>
                         </div>
-                    `;
-                }).join('');
-            }
-
-            showError(message) {
-                const container = document.getElementById('jobsContainer');
-                container.innerHTML = `
-                    <div class="no-jobs">
-                        <h3>🚀 Setting Up Your Job Board</h3>
-                        <p>${message}</p>
-                        <p><small>This is fully automated - no action needed from your side!</small></p>
+                        <div class="job-description">${this.escapeHtml(job.description)}</div>
+                        <div class="job-meta">
+                            <span>
+                                Posted: ${new Date(job.date).toLocaleDateString()} • 
+                                Expires in: ${daysLeft} days
+                            </span>
+                            <a href="${jobUrl}" target="_blank" rel="noopener noreferrer" class="apply-btn">
+                                Apply Now ›
+                            </a>
+                        </div>
                     </div>
                 `;
-            }
-
-            setupEventListeners() {
-                const searchInput = document.getElementById('searchInput');
-                const sourceFilter = document.getElementById('sourceFilter');
-
-                // Debounce search for better performance
-                const debounce = (func, wait) => {
-                    let timeout;
-                    return function executedFunction(...args) {
-                        const later = () => {
-                            clearTimeout(timeout);
-                            func(...args);
-                        };
-                        clearTimeout(timeout);
-                        timeout = setTimeout(later, wait);
-                    };
-                };
-
-                searchInput.addEventListener('input', debounce(() => this.filterJobs(), 300));
-                sourceFilter.addEventListener('change', () => this.filterJobs());
-            }
-
-            filterJobs() {
-                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-                const source = document.getElementById('sourceFilter').value;
-
-                this.filteredJobs = this.jobs.filter(job => {
-                    const matchesSearch = !searchTerm || 
-                        (job.title && job.title.toLowerCase().includes(searchTerm)) ||
-                        (job.company && job.company.toLowerCase().includes(searchTerm)) ||
-                        (job.description && job.description.toLowerCase().includes(searchTerm));
-                    
-                    const matchesSource = !source || job.source === source;
-                    
-                    return matchesSearch && matchesSource;
-                });
-
-                this.renderJobs();
-                this.updateStats();
-            }
-
-            updateStats() {
-                document.getElementById('jobCount').textContent = this.filteredJobs.length;
-                document.getElementById('lastUpdated').textContent = 
-                    `Last updated: ${new Date().toLocaleString()}`;
-            }
-
-            escapeHtml(unsafe) {
-                if (!unsafe) return '';
-                return unsafe
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
-            }
+            }).join('');
         }
 
-        // Initialize the app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            new JobAggregator();
-        });
-    </script>
-</body>
-</html>
+        showError(message) {
+            const container = document.getElementById('jobsContainer');
+            container.innerHTML = `
+                <div class="no-jobs">
+                    <h3>🔄 System Update</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        setupEventListeners() {
+            const searchInput = document.getElementById('searchInput');
+            const sourceFilter = document.getElementById('sourceFilter');
+
+            const debounce = (func, wait) => {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            };
+
+            searchInput.addEventListener('input', debounce(() => this.filterJobs(), 300));
+            sourceFilter.addEventListener('change', () => this.filterJobs());
+        }
+
+        filterJobs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const source = document.getElementById('sourceFilter').value;
+
+            this.filteredJobs = this.jobs.filter(job => {
+                const matchesSearch = !searchTerm || 
+                    job.title.toLowerCase().includes(searchTerm) ||
+                    job.company.toLowerCase().includes(searchTerm) ||
+                    job.description.toLowerCase().includes(searchTerm);
+                
+                const matchesSource = !source || job.source === source;
+                
+                return matchesSearch && matchesSource;
+            });
+
+            this.renderJobs();
+            this.updateStats();
+        }
+
+        updateStats() {
+            document.getElementById('jobCount').textContent = this.filteredJobs.length;
+            document.getElementById('lastUpdated').textContent = 
+                `Last updated: ${new Date().toLocaleString()}`;
+        }
+
+        escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        new JobAggregator();
+    });
+</script>
