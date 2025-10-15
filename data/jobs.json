@@ -1,16 +1,26 @@
 [
   {
-    "title": "Senior Web Developer (Remote)",
-    "company": "Tech Solutions Inc",
-    "description": "Full-time remote position for experienced React developer",
-    "url": "https://example.com/job1",
-    "source": "RemoteOK"
+    "title": "Senior Frontend Developer (Remote)",
+    "company": "Tech Innovations Inc",
+    "description": "Looking for an experienced React developer for full-time remote position. Must have 3+ years experience.",
+    "url": "https://remoteok.io/remote-jobs/example1",
+    "source": "RemoteOK",
+    "date": "$(date -Iseconds)"
   },
   {
     "title": "Full Stack Engineer", 
     "company": "StartupXYZ",
-    "description": "Remote full-stack role with modern technologies",
-    "url": "https://example.com/job2",
-    "source": "WeWorkRemotely"
+    "description": "Full remote full-stack role with modern technologies including Node.js, React, and AWS.",
+    "url": "https://weworkremotely.com/remote-jobs/example2", 
+    "source": "WeWorkRemotely",
+    "date": "$(date -Iseconds)"
+  },
+  {
+    "title": "UX/UI Designer",
+    "company": "Creative Solutions",
+    "description": "Remote design position focusing on user experience and interface design for web applications.",
+    "url": "https://justremote.co/design-jobs/example3",
+    "source": "JustRemote",
+    "date": "$(date -Iseconds)"
   }
 ]
