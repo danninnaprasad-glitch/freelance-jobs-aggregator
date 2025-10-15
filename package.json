@@ -6,10 +6,12 @@
   "scripts": {
     "scrape": "node scripts/scraper.js",
     "cleanup": "node scripts/cleanup.js",
-    "update": "npm run scrape && npm run cleanup"
+    "update": "node scripts/scraper.js && node scripts/cleanup.js"
   },
   "dependencies": {
-    "axios": "^1.6.0",
     "rss-parser": "^3.13.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
