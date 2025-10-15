@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Freelance Jobs</title>
+    <style>body{font-family:Arial;max-width:800px;margin:0 auto;padding:20px;}</style>
+</head>
+<body>
+    <h1>Freelance Job Aggregator</h1>
+    <div id="jobs">Loading jobs...</div>
+    <script>
+        fetch('./data/jobs.json')
+            .then(r => r.json())
+            .then(jobs => {
+                document.getElementById('jobs').innerHTML = 
+                    jobs.map(job => `<div><h3>${job.title}</h3><p>${job.company}</p><a href="${job.url}">Apply</a></div>`).join('');
+            });
+    </script>
+</body>
+</html>
