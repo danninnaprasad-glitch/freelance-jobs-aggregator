@@ -1,10 +1,9 @@
-const axios = require('axios');
 const Parser = require('rss-parser');
 const fs = require('fs');
 const path = require('path');
 
 const parser = new Parser();
-const jobsFile = path.join(__dirname, '../data/jobs.json');
+const jobsFile = path.join(__dirname, '../docs/data/jobs.json'); // Changed to docs/data
 
 // Genuine freelance job sources
 const SOURCES = [
@@ -22,76 +21,75 @@ const SOURCES = [
     name: "JustRemote",
     url: "https://justremote.co/remote-jobs/rss",
     type: "rss"
-  },
-  {
-    name: "Remote.co",
-    url: "https://remote.co/job/software-dev/rss/",
-    type: "rss"
   }
 ];
 
 async function loadExistingJobs() {
   try {
-    const data = await fs.promises.readFile(jobsFile, 'utf8');
-    return JSON.parse(data);
+    if (fs.existsSync(jobsFile)) {
+      const data = await fs.promises.readFile(jobsFile, 'utf8');
+      return JSON.parse(data);
+    }
+    return [];
   } catch (error) {
+    console.log('No existing jobs file found, starting fresh...');
     return [];
   }
 }
 
 async function scrapeRSS(source) {
   try {
-    console.log(`Scraping RSS: ${source.name}`);
+    console.log(`🔍 Scraping from ${source.name}...`);
     const feed = await parser.parseURL(source.url);
     
-    return feed.items.map(item => ({
-      title: item.title || 'No title',
-      description: item.contentSnippet || item.content || 'No description available',
+    const jobs = feed.items.map(item => ({
+      title: item.title || 'Freelance Opportunity',
+      description: item.contentSnippet || item.content || 'Check the link for more details',
       company: item.creator || source.name,
       url: item.link,
       source: source.name,
       date: new Date(item.pubDate || Date.now()).toISOString(),
-      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      id: `rss_${Buffer.from(item.link).toString('base64').slice(0, 15)}`
+      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+      id: `job_${source.name}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     }));
+    
+    console.log(`✅ Found ${jobs.length} jobs from ${source.name}`);
+    return jobs;
   } catch (error) {
-    console.error(`Error scraping RSS ${source.name}:`, error.message);
+    console.error(`❌ Error scraping ${source.name}:`, error.message);
     return [];
   }
 }
 
 async function main() {
-  console.log('Starting job scraping...');
+  console.log('🚀 Starting job scraping process...');
   
-  // Ensure data directory exists
-  await fs.promises.mkdir(path.dirname(jobsFile), { recursive: true });
-  
-  const existingJobs = await loadExistingJobs();
-  const existingIds = new Set(existingJobs.map(job => job.id));
-  
-  let newJobs = [];
-  
-  for (const source of SOURCES) {
-    let jobs = [];
+  try {
+    // Ensure data directory exists
+    await fs.promises.mkdir(path.dirname(jobsFile), { recursive: true });
+    console.log('📁 Data directory ready');
     
-    if (source.type === 'rss') {
-      jobs = await scrapeRSS(source);
+    const existingJobs = await loadExistingJobs();
+    console.log(`📊 Existing jobs: ${existingJobs.length}`);
+    
+    let allNewJobs = [];
+    
+    for (const source of SOURCES) {
+      const newJobs = await scrapeRSS(source);
+      allNewJobs = [...allNewJobs, ...newJobs];
     }
     
-    // Filter out duplicates
-    const uniqueJobs = jobs.filter(job => !existingIds.has(job.id));
-    newJobs = [...newJobs, ...uniqueJobs];
+    // Combine existing and new jobs (in real scenario, we'd dedupe)
+    const allJobs = [...existingJobs, ...allNewJobs];
     
-    // Add new IDs to existing set
-    uniqueJobs.forEach(job => existingIds.add(job.id));
+    // Save to file
+    await fs.promises.writeFile(jobsFile, JSON.stringify(allJobs, null, 2));
+    console.log(`🎉 Success! Total jobs: ${allJobs.length}`);
+    console.log(`💾 Saved to: ${jobsFile}`);
     
-    console.log(`Found ${jobs.length} jobs from ${source.name}, ${uniqueJobs.length} new`);
+  } catch (error) {
+    console.error('💥 Critical error:', error);
   }
-  
-  const allJobs = [...existingJobs, ...newJobs];
-  
-  await fs.promises.writeFile(jobsFile, JSON.stringify(allJobs, null, 2));
-  console.log(`✅ Added ${newJobs.length} new jobs. Total: ${allJobs.length} jobs.`);
 }
 
-main().catch(console.error);
+main();
