@@ -1,16 +1,9 @@
 [
   {
-    "title": "Senior Web Developer (Remote)",
-    "company": "Tech Solutions Inc",
-    "description": "Full-time remote position for experienced React developer",
-    "url": "https://example.com/job1",
-    "source": "RemoteOK"
-  },
-  {
-    "title": "Full Stack Engineer", 
-    "company": "StartupXYZ",
-    "description": "Remote full-stack role with modern technologies",
-    "url": "https://example.com/job2",
-    "source": "WeWorkRemotely"
+    "title": "Test Job - System Working",
+    "company": "Test Company",
+    "description": "The system is working! Real jobs will appear after the first automatic update.",
+    "url": "https://github.com",
+    "source": "System"
   }
 ]
