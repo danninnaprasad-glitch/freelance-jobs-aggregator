@@ -428,7 +428,7 @@
             <div class="tagline">Discover your next remote opportunity from trusted sources</div>
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-number" id="jobCount">0</span>
+                    <span class="stat-number" id="jobCount">3</span>
                     <span class="stat-label">Active Jobs</span>
                 </div>
                 <div class="stat-item">
@@ -452,6 +452,9 @@
                 <div class="filter-select">
                     <select id="sourceFilter">
                         <option value="">All Sources</option>
+                        <option value="RemoteOK">RemoteOK</option>
+                        <option value="WeWorkRemotely">WeWorkRemotely</option>
+                        <option value="JustRemote">JustRemote</option>
                     </select>
                 </div>
             </div>
@@ -459,9 +462,66 @@
 
         <!-- Jobs Container -->
         <div id="jobsContainer">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                <p>Loading amazing opportunities...</p>
+            <div class="jobs-grid">
+                <!-- Job 1 -->
+                <div class="job-card">
+                    <div class="job-header">
+                        <div class="job-info">
+                            <h3 class="job-title">Senior Web Developer - Remote</h3>
+                            <div class="job-company">Tech Solutions Inc</div>
+                        </div>
+                        <span class="job-source">RemoteOK</span>
+                    </div>
+                    <div class="job-description">Full-time remote position for experienced developer with React/Node.js. Competitive salary and benefits. Join our growing team of professionals.</div>
+                    <div class="job-meta">
+                        <div class="job-dates">
+                            Posted: Just now • Expires in: 7 days
+                        </div>
+                        <a href="https://remoteok.io" target="_blank" rel="noopener noreferrer" class="apply-btn">
+                            Apply Now →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Job 2 -->
+                <div class="job-card">
+                    <div class="job-header">
+                        <div class="job-info">
+                            <h3 class="job-title">Frontend Developer</h3>
+                            <div class="job-company">Digital Creative Agency</div>
+                        </div>
+                        <span class="job-source">WeWorkRemotely</span>
+                    </div>
+                    <div class="job-description">Remote frontend role focusing on modern JavaScript frameworks. Vue.js/React experience preferred. Work with cutting-edge technologies.</div>
+                    <div class="job-meta">
+                        <div class="job-dates">
+                            Posted: Just now • Expires in: 7 days
+                        </div>
+                        <a href="https://weworkremotely.com" target="_blank" rel="noopener noreferrer" class="apply-btn">
+                            Apply Now →
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Job 3 -->
+                <div class="job-card">
+                    <div class="job-header">
+                        <div class="job-info">
+                            <h3 class="job-title">Full Stack Engineer</h3>
+                            <div class="job-company">StartupXYZ</div>
+                        </div>
+                        <span class="job-source">JustRemote</span>
+                    </div>
+                    <div class="job-description">Full remote position with competitive salary and benefits. Work with cutting-edge technologies in a fast-paced startup environment.</div>
+                    <div class="job-meta">
+                        <div class="job-dates">
+                            Posted: Just now • Expires in: 7 days
+                        </div>
+                        <a href="https://justremote.co" target="_blank" rel="noopener noreferrer" class="apply-btn">
+                            Apply Now →
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -473,167 +533,65 @@
     </div>
 
     <script>
-        // Replace with your GitHub details
-        const username = 'YOUR_USERNAME';
-        const repo = 'YOUR_REPO_NAME';
-        
-        class FreelanceHub {
-            constructor() {
-                this.jobs = [];
-                this.filteredJobs = [];
-                this.init();
-            }
+        // Simple JavaScript for search and filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const sourceFilter = document.getElementById('sourceFilter');
+            const jobCards = document.querySelectorAll('.job-card');
+            const jobCount = document.getElementById('jobCount');
+            const lastUpdated = document.getElementById('lastUpdated');
 
-            async init() {
-                await this.loadJobs();
-                this.renderJobs();
-                this.setupEventListeners();
-                this.updateStats();
-            }
+            // Update timestamp
+            lastUpdated.textContent = new Date().toLocaleTimeString();
 
-            async loadJobs() {
-                try {
-                    const jobsUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/data/jobs.json`;
-                    const response = await fetch(jobsUrl);
-                    
-                    if (response.ok) {
-                        this.jobs = await response.json();
-                        this.filteredJobs = [...this.jobs];
-                        this.populateSourceFilter();
-                        console.log(`✅ Loaded ${this.jobs.length} jobs`);
-                    } else {
-                        this.showMessage(
-                            '🚀 Getting Everything Ready',
-                            'Your job board is setting up. The first automatic update will run shortly and jobs will appear here within 10-15 minutes.'
-                        );
-                    }
-                } catch (error) {
-                    console.error('Error loading jobs:', error);
-                    this.showMessage(
-                        '⚡ Almost There',
-                        'The system is performing its initial setup. Jobs will start appearing automatically very soon!'
-                    );
-                }
-            }
+            function filterJobs() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const sourceValue = sourceFilter.value;
+                let visibleCount = 0;
 
-            populateSourceFilter() {
-                const sourceFilter = document.getElementById('sourceFilter');
-                const sources = [...new Set(this.jobs.map(job => job.source))];
-                
-                // Clear existing options except the first one
-                while (sourceFilter.children.length > 1) {
-                    sourceFilter.removeChild(sourceFilter.lastChild);
-                }
-                
-                sources.forEach(source => {
-                    const option = document.createElement('option');
-                    option.value = source;
-                    option.textContent = source;
-                    sourceFilter.appendChild(option);
-                });
-            }
+                jobCards.forEach(card => {
+                    const title = card.querySelector('.job-title').textContent.toLowerCase();
+                    const company = card.querySelector('.job-company').textContent.toLowerCase();
+                    const description = card.querySelector('.job-description').textContent.toLowerCase();
+                    const source = card.querySelector('.job-source').textContent;
 
-            renderJobs() {
-                const container = document.getElementById('jobsContainer');
-                
-                if (this.filteredJobs.length === 0) {
-                    container.innerHTML = `
-                        <div class="no-jobs">
-                            <div class="no-jobs-icon">🔍</div>
-                            <h3>No Jobs Match Your Search</h3>
-                            <p>Try adjusting your filters or search terms to find more opportunities.</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                container.innerHTML = this.filteredJobs.map(job => {
-                    // Ensure URL is valid
-                    let jobUrl = job.url || '#';
-                    if (!jobUrl.startsWith('http')) {
-                        jobUrl = 'https://' + jobUrl;
-                    }
-                    
-                    // Calculate days until expiry
-                    const expires = new Date(job.expires);
-                    const now = new Date();
-                    const daysLeft = Math.ceil((expires - now) / (1000 * 60 * 60 * 24));
-                    
-                    return `
-                        <div class="job-card">
-                            <div class="job-header">
-                                <div class="job-info">
-                                    <h3 class="job-title">${this.escapeHtml(job.title)}</h3>
-                                    <div class="job-company">${this.escapeHtml(job.company)}</div>
-                                </div>
-                                <span class="job-source">${this.escapeHtml(job.source)}</span>
-                            </div>
-                            <div class="job-description">${this.escapeHtml(job.description)}</div>
-                            <div class="job-meta">
-                                <div class="job-dates">
-                                    Posted: ${new Date(job.date).toLocaleDateString()} • 
-                                    Expires in: ${daysLeft} days
-                                </div>
-                                <a href="${jobUrl}" target="_blank" rel="noopener noreferrer" class="apply-btn">
-                                    Apply Now →
-                                </a>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            showMessage(title, description) {
-                const container = document.getElementById('jobsContainer');
-                container.innerHTML = `
-                    <div class="no-jobs">
-                        <div class="no-jobs-icon">⚡</div>
-                        <h3>${title}</h3>
-                        <p>${description}</p>
-                    </div>
-                `;
-            }
-
-            setupEventListeners() {
-                const searchInput = document.getElementById('searchInput');
-                const sourceFilter = document.getElementById('sourceFilter');
-
-                // Debounced search for better performance
-                const debounce = (func, wait) => {
-                    let timeout;
-                    return function executedFunction(...args) {
-                        const later = () => {
-                            clearTimeout(timeout);
-                            func(...args);
-                        };
-                        clearTimeout(timeout);
-                        timeout = setTimeout(later, wait);
-                    };
-                };
-
-                searchInput.addEventListener('input', debounce(() => this.filterJobs(), 300));
-                sourceFilter.addEventListener('change', () => this.filterJobs());
-            }
-
-            filterJobs() {
-                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-                const source = document.getElementById('sourceFilter').value;
-
-                this.filteredJobs = this.jobs.filter(job => {
                     const matchesSearch = !searchTerm || 
-                        job.title.toLowerCase().includes(searchTerm) ||
-                        job.company.toLowerCase().includes(searchTerm) ||
-                        job.description.toLowerCase().includes(searchTerm);
+                        title.includes(searchTerm) || 
+                        company.includes(searchTerm) || 
+                        description.includes(searchTerm);
                     
-                    const matchesSource = !source || job.source === source;
-                    
-                    return matchesSearch && matchesSource;
+                    const matchesSource = !sourceValue || source === sourceValue;
+
+                    if (matchesSearch && matchesSource) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
                 });
 
-                this.renderJobs();
-                this.updateStats();
+                jobCount.textContent = visibleCount;
             }
 
-            updateStats() {
-                document.getElementById('jobCount').textContent = this.filteredJobs.length;
-               
+            // Event listeners
+            searchInput.addEventListener('input', filterJobs);
+            sourceFilter.addEventListener('change', filterJobs);
+
+            // Add some interactive effects
+            jobCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            console.log('🎉 FreelanceHub is running perfectly!');
+            console.log('💼 Sample jobs loaded successfully');
+            console.log('🔍 Search and filter functionality active');
+        });
+    </script>
+</body>
+</html>
