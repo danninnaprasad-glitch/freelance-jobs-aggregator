@@ -1,0 +1,54 @@
+const Parser = require('rss-parser');
+const fs = require('fs');
+const path = require('path');
+
+const parser = new Parser();
+const jobsFile = path.join(__dirname, '../data/jobs.json');
+
+const SOURCES = [
+  {
+    name: "RemoteOK",
+    url: "https://remoteok.io/remote-freelance-jobs.rss",
+    type: "rss"
+  },
+  {
+    name: "WeWorkRemotely", 
+    url: "https://weworkremotely.com/categories/remote-programming-jobs.rss",
+    type: "rss"
+  }
+];
+
+async function main() {
+  console.log('🔄 Updating job data...');
+  
+  // Create data directory
+  if (!fs.existsSync(path.dirname(jobsFile))) {
+    fs.mkdirSync(path.dirname(jobsFile), { recursive: true });
+  }
+  
+  let allJobs = [];
+  
+  // Scrape from sources
+  for (const source of SOURCES) {
+    try {
+      const feed = await parser.parseURL(source.url);
+      const jobs = feed.items.slice(0, 5).map(item => ({
+        title: item.title || 'Freelance Job',
+        company: item.creator || source.name,
+        url: item.link,
+        source: source.name,
+        date: new Date().toISOString(),
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      }));
+      allJobs = allJobs.concat(jobs);
+    } catch (error) {
+      console.log(`Failed to scrape ${source.name}`);
+    }
+  }
+  
+  // Save to file
+  fs.writeFileSync(jobsFile, JSON.stringify(allJobs, null, 2));
+  console.log(`✅ Updated ${allJobs.length} jobs`);
+}
+
+main();
