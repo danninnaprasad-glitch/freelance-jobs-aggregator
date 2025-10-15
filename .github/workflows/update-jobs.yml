@@ -1,48 +1,47 @@
-<script>
-    // Try multiple paths to find the jobs file
-    async function loadJobs() {
-        const paths = [
-            './data/jobs.json',
-            'data/jobs.json', 
-            '/data/jobs.json',
-            'https://raw.githubusercontent.com/<YOUR_USERNAME>/<YOUR_REPO>/main/data/jobs.json'
-        ];
-        
-        for (const path of paths) {
-            try {
-                console.log('Trying path:', path);
-                const response = await fetch(path);
-                if (response.ok) {
-                    const jobs = await response.json();
-                    displayJobs(jobs);
-                    return;
-                }
-            } catch (error) {
-                console.log('Failed:', path);
+name: Update Jobs
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create jobs data
+        run: |
+          mkdir -p data
+          cat > data/jobs.json << 'EOF'
+          [
+            {
+              "title": "Senior Web Developer (Remote)",
+              "company": "Tech Solutions Inc",
+              "description": "Full-time remote position for experienced React developer",
+              "url": "https://example.com/job1",
+              "source": "RemoteOK"
+            },
+            {
+              "title": "Full Stack Engineer", 
+              "company": "StartupXYZ",
+              "description": "Remote full-stack role with modern technologies",
+              "url": "https://example.com/job2",
+              "source": "WeWorkRemotely"
             }
-        }
-        
-        // If all paths fail, show message
-        document.getElementById('jobs').innerHTML = 
-            '<p>Jobs will load after first update. Check back in 10 minutes.</p>';
-    }
+          ]
+          EOF
 
-    function displayJobs(jobs) {
-        const container = document.getElementById('jobs');
-        if (jobs.length === 0) {
-            container.innerHTML = '<p>No jobs found yet. First update in progress...</p>';
-        } else {
-            container.innerHTML = jobs.map(job => `
-                <div class="job">
-                    <h3>${job.title || 'No title'}</h3>
-                    <p><strong>Company:</strong> ${job.company || 'Unknown'}</p>
-                    <p>${job.description || 'No description'}</p>
-                    <a href="${job.url || '#'}" target="_blank">Apply Now</a>
-                </div>
-            `).join('');
-        }
-    }
-
-    // Load jobs when page loads
-    loadJobs();
-</script>
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add data/jobs.json
+          git commit -m "Update job listings" || echo "No changes to commit"
+          git push
