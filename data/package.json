@@ -6,7 +6,5 @@
   "scripts": {
     "scrape": "node scripts/live-scraper.js"
   },
-  "dependencies": {
-    "rss-parser": "^3.13.0"
-  }
+  "dependencies": {}
 }
