@@ -1,6 +1,15 @@
 {
-  "name": "freelance-job-board",
+  "name": "auto-job-scraper",
   "version": "1.0.0",
-  "description": "Automatic job aggregator with real job redirects",
-  "type": "module"
+  "description": "Automatic job scraper for freelance opportunities",
+  "main": "index.js",
+  "scripts": {
+    "scrape": "node scripts/auto-scraper.js",
+    "cleanup": "node scripts/cleanup.js"
+  },
+  "dependencies": {
+    "rss-parser": "^3.13.0",
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12"
+  }
 }
