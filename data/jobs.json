@@ -1,1 +1,47 @@
-[{"title":"Test Job","company":"Test","url":"https://example.com"}]
+[
+  {
+    "title": "Senior Web Developer (Remote)",
+    "company": "Tech Solutions Inc", 
+    "description": "Full-time remote position for experienced developer with React/Node.js. Competitive salary and benefits.",
+    "url": "https://remoteok.io",
+    "source": "RemoteOK",
+    "date": "2024-01-15T10:00:00.000Z",
+    "expires": "2024-01-22T10:00:00.000Z"
+  },
+  {
+    "title": "Frontend Developer",
+    "company": "Digital Creative Agency",
+    "description": "Remote frontend role focusing on modern JavaScript frameworks. Vue.js/React experience preferred.",
+    "url": "https://weworkremotely.com",
+    "source": "WeWorkRemotely",
+    "date": "2024-01-15T10:00:00.000Z",
+    "expires": "2024-01-22T10:00:00.000Z"
+  },
+  {
+    "title": "Full Stack Engineer",
+    "company": "StartupXYZ",
+    "description": "Full remote position with competitive salary and benefits. Work with cutting-edge technologies.",
+    "url": "https://justremote.co", 
+    "source": "JustRemote",
+    "date": "2024-01-15T10:00:00.000Z",
+    "expires": "2024-01-22T10:00:00.000Z"
+  },
+  {
+    "title": "UX/UI Designer",
+    "company": "Creative Designs Co",
+    "description": "Remote design position for experienced UI/UX designer. Figma and prototyping skills required.",
+    "url": "https://dribbble.com",
+    "source": "Dribbble",
+    "date": "2024-01-15T10:00:00.000Z",
+    "expires": "2024-01-22T10:00:00.000Z"
+  },
+  {
+    "title": "Digital Marketing Specialist",
+    "company": "Growth Marketing Agency",
+    "description": "Remote marketing role focusing on SEO, content strategy, and social media management.",
+    "url": "https://upwork.com",
+    "source": "Upwork",
+    "date": "2024-01-15T10:00:00.000Z",
+    "expires": "2024-01-22T10:00:00.000Z"
+  }
+]
