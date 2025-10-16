@@ -1,6 +1,12 @@
 {
-  "name": "freelance-job-board",
+  "name": "live-job-scraper",
   "version": "1.0.0",
-  "description": "Automatic job board with realistic listings",
-  "type": "module"
+  "description": "Automatic live job scraper for real-time opportunities",
+  "main": "index.js",
+  "scripts": {
+    "scrape": "node scripts/live-scraper.js"
+  },
+  "dependencies": {
+    "rss-parser": "^3.13.0"
+  }
 }
