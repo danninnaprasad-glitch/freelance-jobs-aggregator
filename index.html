@@ -1,597 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta name="google-site-verification" content="uWOPBZxWyGTrciAscllxGjMhxstiT9d7W04HMswVJeo" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FreelanceHub • Find Your Next Remote Opportunity</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #10b981;
-            --dark: #1f2937;
-            --light: #f8fafc;
-            --gray: #6b7280;
-            --gray-light: #e5e7eb;
+            --primary: #6366f1; --primary-dark: #4f46e5; --secondary: #10b981;
+            --dark: #1f2937; --light: #f8fafc; --gray: #6b7280; --gray-light: #e5e7eb;
         }
-
         body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--dark);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif; line-height: 1.6; color: var(--dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header Styles */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         header {
-            text-align: center;
-            margin-bottom: 50px;
-            padding: 60px 40px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
+            text-align: center; margin-bottom: 50px; padding: 60px 40px;
+            background: rgba(255, 255, 255, 0.95); border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px);
         }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-
         .logo {
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 2.5rem; font-weight: 700;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
-
-        .tagline {
-            font-size: 1.2rem;
-            color: var(--gray);
-            margin-bottom: 30px;
-            font-weight: 400;
-        }
-
         .stats {
-            display: inline-flex;
-            gap: 30px;
-            background: var(--light);
-            padding: 20px 40px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            display: inline-flex; gap: 30px; background: var(--light);
+            padding: 20px 40px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: block;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Filters */
         .filters-container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 40px;
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); margin-bottom: 40px; backdrop-filter: blur(10px);
         }
-
-        .filters {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .search-box {
-            flex: 1;
-            position: relative;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray);
-        }
-
+        .filters { display: flex; gap: 20px; align-items: center; }
+        .search-box { flex: 1; position: relative; }
         #searchInput {
-            width: 100%;
-            padding: 15px 15px 15px 45px;
-            border: 2px solid var(--gray-light);
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: var(--light);
+            width: 100%; padding: 15px 15px 15px 45px; border: 2px solid var(--gray-light);
+            border-radius: 12px; font-size: 16px; transition: all 0.3s ease; background: var(--light);
         }
-
-        #searchInput:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .filter-select {
-            min-width: 200px;
-        }
-
-        #sourceFilter {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid var(--gray-light);
-            border-radius: 12px;
-            font-size: 16px;
-            background: var(--light);
-            cursor: pointer;
-        }
-
-        /* Jobs Grid */
-        .jobs-grid {
-            display: grid;
-            gap: 25px;
-            margin-bottom: 50px;
-        }
-
+        .jobs-grid { display: grid; gap: 25px; margin-bottom: 50px; }
         .job-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-            position: relative;
-            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95); border-radius: 16px; padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease;
         }
-
-        .job-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .job-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            border-color: var(--primary);
-        }
-
-        .job-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            gap: 20px;
-        }
-
-        .job-info {
-            flex: 1;
-        }
-
-        .job-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 8px;
-            line-height: 1.3;
-        }
-
-        .job-company {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
+        .job-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); }
+        .job-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .job-title { font-size: 1.4rem; font-weight: 600; color: var(--dark); margin-bottom: 8px; }
+        .job-company { font-size: 1.1rem; font-weight: 500; color: var(--primary); margin-bottom: 5px; }
         .job-source {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            white-space: nowrap;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;
+            padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
         }
-
-        .job-description {
-            color: var(--gray);
-            line-height: 1.6;
-            margin-bottom: 25px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
+        .job-description { color: var(--gray); line-height: 1.6; margin-bottom: 25px; }
         .job-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 20px;
-            border-top: 1px solid var(--gray-light);
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 20px; border-top: 1px solid var(--gray-light); font-size: 0.9rem; color: var(--gray);
         }
-
-        .job-dates {
-            font-size: 0.9rem;
-            color: var(--gray);
-        }
-
         .apply-btn {
-            background: linear-gradient(135deg, var(--secondary), #059669);
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            background: linear-gradient(135deg, var(--secondary), #059669); color: white;
+            padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: 600;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;
         }
-
-        .apply-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        /* No Jobs State */
-        .no-jobs {
-            text-align: center;
-            padding: 80px 40px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .no-jobs-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-
-        .no-jobs h3 {
-            font-size: 1.5rem;
-            color: var(--dark);
-            margin-bottom: 15px;
-        }
-
-        .no-jobs p {
-            color: var(--gray);
-            line-height: 1.6;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* Footer */
+        .apply-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
         footer {
-            text-align: center;
-            padding: 40px;
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+            text-align: center; padding: 40px; color: white;
+            background: rgba(255, 255, 255, 0.1); border-radius: 20px; backdrop-filter: blur(10px);
         }
-
-        .footer-text {
-            font-size: 1rem;
-            margin-bottom: 10px;
-            opacity: 0.9;
-        }
-
-        .footer-subtext {
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-
-        /* Loading State */
-        .loading {
-            text-align: center;
-            padding: 60px 40px;
-            color: white;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 4px solid white;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive Design */
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            header {
-                padding: 40px 20px;
-                margin-bottom: 30px;
-            }
-
-            .logo {
-                font-size: 2rem;
-            }
-
-            .stats {
-                flex-direction: column;
-                gap: 15px;
-                padding: 20px;
-            }
-
-            .filters {
-                flex-direction: column;
-            }
-
-            .search-box, .filter-select {
-                width: 100%;
-            }
-
-            .job-header {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .job-meta {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-
-            .apply-btn {
-                width: 100%;
-                justify-content: center;
-            }
+            .filters, .job-header, .job-meta { flex-direction: column; gap: 15px; }
+            .apply-btn { width: 100%; justify-content: center; }
         }
-
-        /* Animation for job cards */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .job-card {
-            animation: fadeInUp 0.5s ease forwards;
-        }
-
-        .job-card:nth-child(1) { animation-delay: 0.1s; }
-        .job-card:nth-child(2) { animation-delay: 0.2s; }
-        .job-card:nth-child(3) { animation-delay: 0.3s; }
-        .job-card:nth-child(4) { animation-delay: 0.4s; }
-        .job-card:nth-child(5) { animation-delay: 0.5s; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <header>
             <div class="logo">FreelanceHub</div>
-            <div class="tagline">Discover your next remote opportunity from trusted sources</div>
+            <div style="color: #666; margin-bottom: 30px; font-size: 1.2rem;">
+                Discover your next remote opportunity from trusted sources
+            </div>
             <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-number" id="jobCount">3</span>
-                    <span class="stat-label">Active Jobs</span>
+                <div style="text-align: center;">
+                    <span style="font-size: 2rem; font-weight: 700; color: #6366f1; display: block;" id="jobCount">5</span>
+                    <span style="font-size: 0.9rem; color: #666; text-transform: uppercase;">Active Jobs</span>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-number">Auto</span>
-                    <span class="stat-label">Updated</span>
+                <div style="text-align: center;">
+                    <span style="font-size: 2rem; font-weight: 700; color: #6366f1; display: block;">Auto</span>
+                    <span style="font-size: 0.9rem; color: #666; text-transform: uppercase;">Updated</span>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="lastUpdated">Now</span>
-                    <span class="stat-label">Last Refresh</span>
+                <div style="text-align: center;">
+                    <span style="font-size: 2rem; font-weight: 700; color: #6366f1; display: block;" id="lastUpdated">Now</span>
+                    <span style="font-size: 0.9rem; color: #666; text-transform: uppercase;">Last Refresh</span>
                 </div>
             </div>
         </header>
 
-        <!-- Filters -->
         <div class="filters-container">
             <div class="filters">
                 <div class="search-box">
-                    <span class="search-icon">🔍</span>
+                    <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666;">🔍</span>
                     <input type="text" id="searchInput" placeholder="Search jobs by title, company, or skills...">
                 </div>
-                <div class="filter-select">
-                    <select id="sourceFilter">
+                <div style="min-width: 200px;">
+                    <select id="sourceFilter" style="width: 100%; padding: 15px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; background: #f8fafc;">
                         <option value="">All Sources</option>
                         <option value="RemoteOK">RemoteOK</option>
                         <option value="WeWorkRemotely">WeWorkRemotely</option>
                         <option value="JustRemote">JustRemote</option>
+                        <option value="Dribbble">Dribbble</option>
+                        <option value="Upwork">Upwork</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- Jobs Container -->
-        <div id="jobsContainer">
-            <div class="jobs-grid">
-                <!-- Job 1 -->
-                <div class="job-card">
-                    <div class="job-header">
-                        <div class="job-info">
-                            <h3 class="job-title">Senior Web Developer - Remote</h3>
-                            <div class="job-company">Tech Solutions Inc</div>
-                        </div>
-                        <span class="job-source">RemoteOK</span>
-                    </div>
-                    <div class="job-description">Full-time remote position for experienced developer with React/Node.js. Competitive salary and benefits. Join our growing team of professionals.</div>
-                    <div class="job-meta">
-                        <div class="job-dates">
-                            Posted: Just now • Expires in: 7 days
-                        </div>
-                        <a href="https://remoteok.io" target="_blank" rel="noopener noreferrer" class="apply-btn">
-                            Apply Now →
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Job 2 -->
-                <div class="job-card">
-                    <div class="job-header">
-                        <div class="job-info">
-                            <h3 class="job-title">Frontend Developer</h3>
-                            <div class="job-company">Digital Creative Agency</div>
-                        </div>
-                        <span class="job-source">WeWorkRemotely</span>
-                    </div>
-                    <div class="job-description">Remote frontend role focusing on modern JavaScript frameworks. Vue.js/React experience preferred. Work with cutting-edge technologies.</div>
-                    <div class="job-meta">
-                        <div class="job-dates">
-                            Posted: Just now • Expires in: 7 days
-                        </div>
-                        <a href="https://weworkremotely.com" target="_blank" rel="noopener noreferrer" class="apply-btn">
-                            Apply Now →
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Job 3 -->
-                <div class="job-card">
-                    <div class="job-header">
-                        <div class="job-info">
-                            <h3 class="job-title">Full Stack Engineer</h3>
-                            <div class="job-company">StartupXYZ</div>
-                        </div>
-                        <span class="job-source">JustRemote</span>
-                    </div>
-                    <div class="job-description">Full remote position with competitive salary and benefits. Work with cutting-edge technologies in a fast-paced startup environment.</div>
-                    <div class="job-meta">
-                        <div class="job-dates">
-                            Posted: Just now • Expires in: 7 days
-                        </div>
-                        <a href="https://justremote.co" target="_blank" rel="noopener noreferrer" class="apply-btn">
-                            Apply Now →
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <div class="jobs-grid" id="jobsContainer">
+            <!-- Jobs will be loaded here -->
         </div>
 
-        <!-- Footer -->
         <footer>
-            <p class="footer-text">🔄 Automatically updated every 6 hours • ⚡ Expired jobs removed instantly</p>
-            <p class="footer-subtext">Powered by GitHub Actions • Zero maintenance required</p>
+            <p style="font-size: 1rem; margin-bottom: 10px; opacity: 0.9;">🔄 Automatically updated every 6 hours • ⚡ Expired jobs removed instantly</p>
+            <p style="font-size: 0.9rem; opacity: 0.7;">Powered by GitHub Actions • Zero maintenance required</p>
         </footer>
     </div>
 
     <script>
-        // Simple JavaScript for search and filter functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-            const sourceFilter = document.getElementById('sourceFilter');
-            const jobCards = document.querySelectorAll('.job-card');
-            const jobCount = document.getElementById('jobCount');
-            const lastUpdated = document.getElementById('lastUpdated');
+        // Sample jobs data (in real scenario, this would come from data/jobs.json)
+        const sampleJobs = [
+            {
+                "title": "Senior Web Developer (Remote)",
+                "company": "Tech Solutions Inc", 
+                "description": "Full-time remote position for experienced developer with React/Node.js. Competitive salary and benefits.",
+                "url": "https://remoteok.io",
+                "source": "RemoteOK",
+                "date": "2024-01-15T10:00:00.000Z",
+                "expires": "2024-01-22T10:00:00.000Z"
+            },
+            {
+                "title": "Frontend Developer",
+                "company": "Digital Creative Agency",
+                "description": "Remote frontend role focusing on modern JavaScript frameworks. Vue.js/React experience preferred.",
+                "url": "https://weworkremotely.com",
+                "source": "WeWorkRemotely",
+                "date": "2024-01-15T10:00:00.000Z", 
+                "expires": "2024-01-22T10:00:00.000Z"
+            },
+            {
+                "title": "Full Stack Engineer",
+                "company": "StartupXYZ",
+                "description": "Full remote position with competitive salary and benefits. Work with cutting-edge technologies.",
+                "url": "https://justremote.co",
+                "source": "JustRemote",
+                "date": "2024-01-15T10:00:00.000Z",
+                "expires": "2024-01-22T10:00:00.000Z"
+            },
+            {
+                "title": "UX/UI Designer", 
+                "company": "Creative Designs Co",
+                "description": "Remote design position for experienced UI/UX designer. Figma and prototyping skills required.",
+                "url": "https://dribbble.com",
+                "source": "Dribbble",
+                "date": "2024-01-15T10:00:00.000Z",
+                "expires": "2024-01-22T10:00:00.000Z"
+            },
+            {
+                "title": "Digital Marketing Specialist",
+                "company": "Growth Marketing Agency", 
+                "description": "Remote marketing role focusing on SEO, content strategy, and social media management.",
+                "url": "https://upwork.com",
+                "source": "Upwork",
+                "date": "2024-01-15T10:00:00.000Z",
+                "expires": "2024-01-22T10:00:00.000Z"
+            }
+        ];
 
-            // Update timestamp
-            lastUpdated.textContent = new Date().toLocaleTimeString();
-
-            function filterJobs() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const sourceValue = sourceFilter.value;
-                let visibleCount = 0;
-
-                jobCards.forEach(card => {
-                    const title = card.querySelector('.job-title').textContent.toLowerCase();
-                    const company = card.querySelector('.job-company').textContent.toLowerCase();
-                    const description = card.querySelector('.job-description').textContent.toLowerCase();
-                    const source = card.querySelector('.job-source').textContent;
-
-                    const matchesSearch = !searchTerm || 
-                        title.includes(searchTerm) || 
-                        company.includes(searchTerm) || 
-                        description.includes(searchTerm);
-                    
-                    const matchesSource = !sourceValue || source === sourceValue;
-
-                    if (matchesSearch && matchesSource) {
-                        card.style.display = 'block';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-
-                jobCount.textContent = visibleCount;
+        class JobBoard {
+            constructor() {
+                this.jobs = sampleJobs;
+                this.filteredJobs = [...this.jobs];
+                this.init();
             }
 
-            // Event listeners
-            searchInput.addEventListener('input', filterJobs);
-            sourceFilter.addEventListener('change', filterJobs);
+            init() {
+                this.renderJobs();
+                this.setupEventListeners();
+                this.updateStats();
+            }
 
-            // Add some interactive effects
-            jobCards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
-                });
+            renderJobs() {
+                const container = document.getElementById('jobsContainer');
                 
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
-            });
+                container.innerHTML = this.filteredJobs.map(job => `
+                    <div class="job-card">
+                        <div class="job-header">
+                            <div>
+                                <h3 class="job-title">${job.title}</h3>
+                                <div class="job-company">${job.company}</div>
+                            </div>
+                            <span class="job-source">${job.source}</span>
+                        </div>
+                        <div class="job-description">${job.description}</div>
+                        <div class="job-meta">
+                            <div>Posted: ${new Date(job.date).toLocaleDateString()} • Expires: ${new Date(job.expires).toLocaleDateString()}</div>
+                            <a href="${job.url}" target="_blank" class="apply-btn">Apply Now →</a>
+                        </div>
+                    </div>
+                `).join('');
+            }
 
-            console.log('🎉 FreelanceHub is running perfectly!');
-            console.log('💼 Sample jobs loaded successfully');
-            console.log('🔍 Search and filter functionality active');
+            setupEventListeners() {
+                const searchInput = document.getElementById('searchInput');
+                const sourceFilter = document.getElementById('sourceFilter');
+
+                searchInput.addEventListener('input', () => this.filterJobs());
+                sourceFilter.addEventListener('change', () => this.filterJobs());
+            }
+
+            filterJobs() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const source = document.getElementById('sourceFilter').value;
+
+                this.filteredJobs = this.jobs.filter(job => {
+                    const matchesSearch = !searchTerm || 
+                        job.title.toLowerCase().includes(searchTerm) ||
+                        job.company.toLowerCase().includes(searchTerm) ||
+                        job.description.toLowerCase().includes(searchTerm);
+                    
+                    const matchesSource = !source || job.source === source;
+                    
+                    return matchesSearch && matchesSource;
+                });
+
+                this.renderJobs();
+                this.updateStats();
+            }
+
+            updateStats() {
+                document.getElementById('jobCount').textContent = this.filteredJobs.length;
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new JobBoard();
         });
     </script>
 </body>
