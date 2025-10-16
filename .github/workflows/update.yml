@@ -1,135 +1,20 @@
-name: Auto Update Jobs
+name: Simple Job Update
 on:
-  schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:
-  push:
-    branches: [ main ]
 
 permissions:
   contents: write
 
 jobs:
-  update-jobs:
+  update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Create package.json
-        run: |
-          cat > package.json << 'EOF'
-          {
-            "name": "job-scraper",
-            "version": "1.0.0",
-            "dependencies": {
-              "rss-parser": "^3.13.0"
-            }
-          }
-          EOF
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Create and run scraper
-        run: |
+      - uses: actions/checkout@v4
+      - run: |
           mkdir -p data
-          # Create a simple scraper script
-          cat > scraper.js << 'EOF'
-          const Parser = require('rss-parser');
-          const fs = require('fs');
-          const path = require('path');
-
-          const parser = new Parser();
-          const jobsFile = path.join(__dirname, 'data', 'jobs.json');
-
-          const SOURCES = [
-            {
-              name: "RemoteOK",
-              url: "https://remoteok.io/remote-freelance-jobs.rss"
-            },
-            {
-              name: "WeWorkRemotely",
-              url: "https://weworkremotely.com/categories/remote-programming-jobs.rss"
-            }
-          ];
-
-          async function scrapeJobs() {
-            console.log('Starting job scraping...');
-            let allJobs = [];
-
-            for (const source of SOURCES) {
-              try {
-                console.log(\`Scraping \${source.name}...\`);
-                const feed = await parser.parseURL(source.url);
-                const jobs = feed.items.slice(0, 3).map(item => ({
-                  title: item.title || \`\${source.name} Opportunity\`,
-                  company: item.creator || source.name,
-                  description: item.contentSnippet || 'Click for more details',
-                  url: item.link || \`https://\${source.name.toLowerCase().replace(' ', '')}.com\`,
-                  source: source.name,
-                  date: new Date().toISOString(),
-                  expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-                }));
-                allJobs = allJobs.concat(jobs);
-                console.log(\`Found \${jobs.length} jobs from \${source.name}\`);
-              } catch (error) {
-                console.log(\`Failed to scrape \${source.name}: \${error.message}\`);
-                // Add fallback job if scraping fails
-                allJobs.push({
-                  title: \`\${source.name} Freelance Position\`,
-                  company: source.name,
-                  description: 'Various freelance opportunities available',
-                  url: \`https://\${source.name.toLowerCase().replace(' ', '')}.com\`,
-                  source: source.name,
-                  date: new Date().toISOString(),
-                  expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-                });
-              }
-            }
-
-            // Save to file
-            fs.writeFileSync(jobsFile, JSON.stringify(allJobs, null, 2));
-            console.log(\`✅ Saved \${allJobs.length} jobs to \${jobsFile}\`);
-          }
-
-          scrapeJobs().catch(console.error);
-          EOF
-
-          node scraper.js
-
-      - name: Cleanup expired jobs
-        run: |
-          cat > cleanup.js << 'EOF'
-          const fs = require('fs');
-          const path = require('path');
-
-          const jobsFile = path.join(__dirname, 'data', 'jobs.json');
-
-          if (fs.existsSync(jobsFile)) {
-            const jobs = JSON.parse(fs.readFileSync(jobsFile, 'utf8'));
-            const now = new Date();
-            const activeJobs = jobs.filter(job => new Date(job.expires) > now);
-            
-            if (activeJobs.length < jobs.length) {
-              fs.writeFileSync(jobsFile, JSON.stringify(activeJobs, null, 2));
-              console.log(\`Removed \${jobs.length - activeJobs.length} expired jobs\`);
-            }
-          }
-          EOF
-          node cleanup.js
-
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          echo '[{"title":"Test Job","company":"Test","url":"https://example.com"}]' > data/jobs.json
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           git add data/jobs.json
-          git diff --cached --quiet || git commit -m "🤖 Auto-update job listings"
+          git commit -m "Update jobs" || exit 0
           git push
