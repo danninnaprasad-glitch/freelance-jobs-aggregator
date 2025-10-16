@@ -3,19 +3,40 @@ const path = require('path');
 
 const jobsFile = path.join(__dirname, '../data/jobs.json');
 
-function cleanup() {
-  if (!fs.existsSync(jobsFile)) return;
-  
-  const data = fs.readFileSync(jobsFile, 'utf8');
-  const jobs = JSON.parse(data);
-  
-  const now = new Date();
-  const activeJobs = jobs.filter(job => new Date(job.expires) > now);
-  
-  if (activeJobs.length < jobs.length) {
-    fs.writeFileSync(jobsFile, JSON.stringify(activeJobs, null, 2));
-    console.log(`🧹 Removed ${jobs.length - activeJobs.length} expired jobs`);
+function cleanupExpiredJobs() {
+  try {
+    console.log('🧹 Checking for expired jobs...');
+    
+    if (!fs.existsSync(jobsFile)) {
+      console.log('No jobs file found for cleanup');
+      return;
+    }
+    
+    const data = fs.readFileSync(jobsFile, 'utf8');
+    const jobs = JSON.parse(data);
+    
+    const now = new Date();
+    const activeJobs = jobs.filter(job => {
+      try {
+        return new Date(job.expires) > now;
+      } catch (e) {
+        return true; // Keep job if date is invalid
+      }
+    });
+    
+    const expiredCount = jobs.length - activeJobs.length;
+    
+    if (expiredCount > 0) {
+      fs.writeFileSync(jobsFile, JSON.stringify(activeJobs, null, 2));
+      console.log(`✅ Removed ${expiredCount} expired jobs`);
+      console.log(`📊 Active jobs remaining: ${activeJobs.length}`);
+    } else {
+      console.log('✅ No expired jobs found');
+    }
+    
+  } catch (error) {
+    console.log('❌ Cleanup error:', error.message);
   }
 }
 
-cleanup();
+cleanupExpiredJobs();
