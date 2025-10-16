@@ -16,40 +16,33 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      - name: Install dependencies for live scraping
+      - name: Create directories
         run: |
-          npm init -y
-          npm install rss-parser
+          mkdir -p scripts
+          mkdir -p data
 
-      - name: Create scripts directory
-        run: mkdir -p scripts
-
-      - name: Create data directory
-        run: mkdir -p data
-
-      - name: Run live job scraper
+      - name: Run native live scraper
         run: node scripts/live-scraper.js
 
-      - name: Verify live jobs
+      - name: Verify jobs data
         run: |
-          echo "📊 Checking live jobs data:"
+          echo "📊 Generated jobs:"
           ls -la data/
-          echo "🆕 Latest jobs:"
-          cat data/jobs.json | jq '.[0:3]' || echo "JSON parsing failed, showing raw:"
-          head -20 data/jobs.json
+          echo "🆕 First job sample:"
+          head -c 500 data/jobs.json
+          echo -e "\n📈 Total jobs count:"
+          node -e "console.log('Jobs:', JSON.parse(require('fs').readFileSync('data/jobs.json')).length)"
 
-      - name: Commit live job updates
+      - name: Commit and push updates
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add data/jobs.json
-          git diff --staged --quiet || git commit -m "🚀 Live update: Fresh jobs from real sources $(date +'%Y-%m-%d %H:%M')"
+          git diff --cached --quiet || git commit -m "🚀 Auto-update: Fresh jobs $(date +'%Y-%m-%d %H:%M')"
           git push
