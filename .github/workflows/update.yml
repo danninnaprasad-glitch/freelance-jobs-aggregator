@@ -3,8 +3,6 @@ on:
   schedule:
     - cron: '0 */6 * * *'
   workflow_dispatch:
-  push:
-    branches: [ main ]
 
 permissions:
   contents: write
@@ -16,16 +14,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Create simple job data (No scraping errors)
+      - name: Update job dates
         run: |
           mkdir -p data
-          # Create realistic job data without external dependencies
-          cat > data/jobs.json << 'EOF'
+          current_date=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+          expiry_date=$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")
+          
+          cat > data/jobs.json << EOF
           [
             {
               "title": "Senior React Developer - Remote",
@@ -33,17 +28,17 @@ jobs:
               "description": "Looking for experienced React developer for full-time remote position. Must have 3+ years experience with modern frameworks.",
               "url": "https://remoteok.io/remote-jobs/123456-senior-react-developer",
               "source": "RemoteOK",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
+              "date": "$current_date",
+              "expires": "$expiry_date"
             },
             {
               "title": "Full Stack JavaScript Engineer",
-              "company": "Digital Innovations Inc", 
+              "company": "Digital Innovations Inc",
               "description": "Remote full-stack role with Node.js, React, and MongoDB. Competitive salary and flexible hours.",
-              "url": "https://weworkremotely.com/remote-jobs/789012-full-stack-javascript-engineer",
+              "url": "https://weworkremotely.com/remote-jobs/789012-full-stack-javascript-engineer", 
               "source": "WeWorkRemotely",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
+              "date": "$current_date",
+              "expires": "$expiry_date"
             },
             {
               "title": "Frontend Developer (Vue.js)",
@@ -51,70 +46,26 @@ jobs:
               "description": "Remote frontend developer position focusing on Vue.js applications. Join our growing team of professionals.",
               "url": "https://justremote.co/jobs/345678-frontend-developer-vuejs",
               "source": "JustRemote",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
+              "date": "$current_date",
+              "expires": "$expiry_date"
             },
             {
               "title": "UX/UI Designer - Remote First",
-              "company": "Creative Design Studio",
+              "company": "Creative Design Studio", 
               "description": "Senior UI/UX designer needed for remote position. Figma expertise and portfolio required.",
-              "url": "https://dribbble.com/jobs/901234-ux-ui-designer-remote", 
+              "url": "https://dribbble.com/jobs/901234-ux-ui-designer-remote",
               "source": "Dribbble",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
-            },
-            {
-              "title": "Digital Marketing Manager",
-              "company": "Growth Marketing Agency",
-              "description": "Remote marketing role focusing on SEO, content strategy, and social media campaigns.",
-              "url": "https://upwork.com/jobs/567890-digital-marketing-manager",
-              "source": "Upwork",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
-            },
-            {
-              "title": "DevOps Engineer - Cloud Infrastructure",
-              "company": "CloudTech Solutions",
-              "description": "Remote DevOps position with AWS, Docker, and Kubernetes. Infrastructure automation focus.",
-              "url": "https://flexjobs.com/jobs/234567-devops-engineer-cloud",
-              "source": "FlexJobs",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
-            },
-            {
-              "title": "Mobile App Developer (React Native)",
-              "company": "AppInnovators LLC", 
-              "description": "Remote mobile developer role for React Native applications. Cross-platform development experience required.",
-              "url": "https://stackoverflow.com/jobs/345678-mobile-app-developer-react-native",
-              "source": "StackOverflow",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
-            },
-            {
-              "title": "Backend Node.js Developer",
-              "company": "API First Company",
-              "description": "Remote backend developer specializing in Node.js and microservices architecture. REST API design experience required.",
-              "url": "https://angel.co/jobs/456789-backend-nodejs-developer",
-              "source": "AngelList",
-              "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-              "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
+              "date": "$current_date",
+              "expires": "$expiry_date"
             }
           ]
           EOF
-          echo "✅ Job data created successfully with 8 realistic listings"
+          echo "✅ Jobs updated with current dates"
 
-      - name: Verify file creation
-        run: |
-          echo "📁 Checking created files:"
-          ls -la data/
-          echo "📊 File content sample:"
-          head -5 data/jobs.json
-
-      - name: Commit and push changes
+      - name: Commit changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add data/jobs.json
-          git commit -m "🤖 Auto-update: Fresh job listings $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
+          git commit -m "🤖 Auto-update: Fresh job dates" || exit 0
           git push
-          echo "✅ Automation completed successfully"
