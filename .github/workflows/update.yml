@@ -1,71 +1,47 @@
-name: Auto Update Jobs
+name: Auto Update Live Jobs
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:
+  push:
+    branches: [ main ]
 
 permissions:
   contents: write
 
 jobs:
-  update-jobs:
+  update-live-jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update job dates
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies for live scraping
         run: |
-          mkdir -p data
-          current_date=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
-          expiry_date=$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")
-          
-          cat > data/jobs.json << EOF
-          [
-            {
-              "title": "Senior React Developer - Remote",
-              "company": "TechCorp Solutions",
-              "description": "Looking for experienced React developer for full-time remote position. Must have 3+ years experience with modern frameworks.",
-              "url": "https://remoteok.io/remote-jobs/123456-senior-react-developer",
-              "source": "RemoteOK",
-              "date": "$current_date",
-              "expires": "$expiry_date"
-            },
-            {
-              "title": "Full Stack JavaScript Engineer",
-              "company": "Digital Innovations Inc",
-              "description": "Remote full-stack role with Node.js, React, and MongoDB. Competitive salary and flexible hours.",
-              "url": "https://weworkremotely.com/remote-jobs/789012-full-stack-javascript-engineer", 
-              "source": "WeWorkRemotely",
-              "date": "$current_date",
-              "expires": "$expiry_date"
-            },
-            {
-              "title": "Frontend Developer (Vue.js)",
-              "company": "WebSolutions Co",
-              "description": "Remote frontend developer position focusing on Vue.js applications. Join our growing team of professionals.",
-              "url": "https://justremote.co/jobs/345678-frontend-developer-vuejs",
-              "source": "JustRemote",
-              "date": "$current_date",
-              "expires": "$expiry_date"
-            },
-            {
-              "title": "UX/UI Designer - Remote First",
-              "company": "Creative Design Studio", 
-              "description": "Senior UI/UX designer needed for remote position. Figma expertise and portfolio required.",
-              "url": "https://dribbble.com/jobs/901234-ux-ui-designer-remote",
-              "source": "Dribbble",
-              "date": "$current_date",
-              "expires": "$expiry_date"
-            }
-          ]
-          EOF
-          echo "✅ Jobs updated with current dates"
+          npm init -y
+          npm install rss-parser
 
-      - name: Commit changes
+      - name: Run live job scraper
+        run: node scripts/live-scraper.js
+
+      - name: Verify live jobs
+        run: |
+          echo "📊 Checking live jobs data:"
+          ls -la data/
+          echo "🆕 Latest jobs:"
+          cat data/jobs.json | grep "title" | head -5
+
+      - name: Commit live job updates
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add data/jobs.json
-          git commit -m "🤖 Auto-update: Fresh job dates" || exit 0
+          git commit -m "🚀 Live update: Fresh jobs from real sources $(date +'%Y-%m-%d %H:%M')" || echo "No changes to commit"
           git push
