@@ -1,46 +1,64 @@
 [
   {
-    "title": "Senior Web Developer (Remote)",
-    "company": "Tech Solutions Inc", 
-    "description": "Full-time remote position for experienced developer with React/Node.js. Competitive salary and benefits.",
-    "url": "https://remoteok.io",
+    "title": "Senior React Developer - Remote",
+    "company": "TechCorp Solutions",
+    "description": "Looking for experienced React developer for full-time remote position. Must have 3+ years experience with modern frameworks.",
+    "url": "https://remoteok.io/remote-jobs/123456-senior-react-developer",
     "source": "RemoteOK",
     "date": "2024-01-15T10:00:00.000Z",
     "expires": "2024-01-22T10:00:00.000Z"
   },
   {
-    "title": "Frontend Developer",
-    "company": "Digital Creative Agency",
-    "description": "Remote frontend role focusing on modern JavaScript frameworks. Vue.js/React experience preferred.",
-    "url": "https://weworkremotely.com",
+    "title": "Full Stack JavaScript Engineer",
+    "company": "Digital Innovations Inc",
+    "description": "Remote full-stack role with Node.js, React, and MongoDB. Competitive salary and flexible hours.",
+    "url": "https://weworkremotely.com/remote-jobs/789012-full-stack-javascript-engineer",
     "source": "WeWorkRemotely",
     "date": "2024-01-15T10:00:00.000Z",
     "expires": "2024-01-22T10:00:00.000Z"
   },
   {
-    "title": "Full Stack Engineer",
-    "company": "StartupXYZ",
-    "description": "Full remote position with competitive salary and benefits. Work with cutting-edge technologies.",
-    "url": "https://justremote.co", 
-    "source": "JustRemote",
+    "title": "Frontend Developer (Vue.js)",
+    "company": "WebSolutions Co",
+    "description": "Remote frontend developer position focusing on Vue.js applications. Join our growing team of professionals.",
+    "url": "https://justremote.co/jobs/345678-frontend-developer-vuejs",
+    "source": "JustRemote", 
     "date": "2024-01-15T10:00:00.000Z",
     "expires": "2024-01-22T10:00:00.000Z"
   },
   {
-    "title": "UX/UI Designer",
-    "company": "Creative Designs Co",
-    "description": "Remote design position for experienced UI/UX designer. Figma and prototyping skills required.",
-    "url": "https://dribbble.com",
+    "title": "UX/UI Designer - Remote First",
+    "company": "Creative Design Studio",
+    "description": "Senior UI/UX designer needed for remote position. Figma expertise and portfolio required.",
+    "url": "https://dribbble.com/jobs/901234-ux-ui-designer-remote",
     "source": "Dribbble",
     "date": "2024-01-15T10:00:00.000Z",
     "expires": "2024-01-22T10:00:00.000Z"
   },
   {
-    "title": "Digital Marketing Specialist",
+    "title": "Digital Marketing Manager",
     "company": "Growth Marketing Agency",
-    "description": "Remote marketing role focusing on SEO, content strategy, and social media management.",
-    "url": "https://upwork.com",
+    "description": "Remote marketing role focusing on SEO, content strategy, and social media campaigns.",
+    "url": "https://upwork.com/jobs/567890-digital-marketing-manager",
     "source": "Upwork",
+    "date": "2024-01-15T10:00:00.000Z",
+    "expires": "2024-01-22T10:00:00.000Z"
+  },
+  {
+    "title": "DevOps Engineer - Cloud Infrastructure",
+    "company": "CloudTech Solutions",
+    "description": "Remote DevOps position with AWS, Docker, and Kubernetes. Infrastructure automation focus.",
+    "url": "https://flexjobs.com/jobs/234567-devops-engineer-cloud",
+    "source": "FlexJobs",
+    "date": "2024-01-15T10:00:00.000Z",
+    "expires": "2024-01-22T10:00:00.000Z"
+  },
+  {
+    "title": "Mobile App Developer (React Native)",
+    "company": "AppInnovators LLC",
+    "description": "Remote mobile developer role for React Native applications. Cross-platform development experience required.",
+    "url": "https://stackoverflow.com/jobs/345678-mobile-app-developer-react-native",
+    "source": "StackOverflow",
     "date": "2024-01-15T10:00:00.000Z",
     "expires": "2024-01-22T10:00:00.000Z"
   }
