@@ -1,6 +1,6 @@
 {
   "name": "freelance-job-board",
   "version": "1.0.0",
-  "description": "Automatic job aggregator",
+  "description": "Automatic job aggregator with real job redirects",
   "type": "module"
 }
