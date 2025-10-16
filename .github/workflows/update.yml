@@ -1,20 +1,329 @@
-name: Simple Job Update
+name: Auto Update Jobs
 on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:
+  push:
+    branches: [ main ]
 
 permissions:
   contents: write
 
 jobs:
-  update:
+  update-jobs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: |
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Create package.json
+        run: |
+          cat > package.json << 'EOF'
+          {
+            "name": "job-scraper",
+            "version": "1.0.0",
+            "dependencies": {
+              "rss-parser": "^3.13.0",
+              "axios": "^1.6.0"
+            }
+          }
+          EOF
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run enhanced scraper with 15+ sources
+        run: |
           mkdir -p data
-          echo '[{"title":"Test Job","company":"Test","url":"https://example.com"}]' > data/jobs.json
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          cat > scraper.js << 'EOF'
+          const Parser = require('rss-parser');
+          const axios = require('axios');
+          const fs = require('fs');
+          const path = require('path');
+
+          const parser = new Parser();
+          const jobsFile = path.join(__dirname, 'data', 'jobs.json');
+
+          // Expanded job sources - 15+ different platforms
+          const SOURCES = [
+            // Remote Job Boards
+            {
+              name: "RemoteOK",
+              url: "https://remoteok.io/remote-freelance-jobs.rss",
+              type: "rss"
+            },
+            {
+              name: "WeWorkRemotely",
+              url: "https://weworkremotely.com/categories/remote-programming-jobs.rss",
+              type: "rss"
+            },
+            {
+              name: "JustRemote",
+              url: "https://justremote.co/remote-jobs/rss",
+              type: "rss"
+            },
+            {
+              name: "Remote.co",
+              url: "https://remote.co/job/software-dev/rss/",
+              type: "rss"
+            },
+            {
+              name: "WorkingNomads",
+              url: "https://www.workingnomads.com/jobsapi?feed=jobs",
+              type: "rss"
+            },
+            {
+              name: "Remotive",
+              url: "https://remotive.io/remote-jobs/software-dev/rss",
+              type: "rss"
+            },
+            {
+              name: "FlexJobs",
+              url: "https://www.flexjobs.com/feed/rss",
+              type: "rss"
+            },
+            
+            // Freelance Platforms
+            {
+              name: "Upwork",
+              url: "https://www.upwork.com/ab/feed/jobs/rss?q=freelance",
+              type: "rss"
+            },
+            {
+              name: "Freelancer",
+              url: "https://www.freelancer.com/rss.xml",
+              type: "rss"
+            },
+            {
+              name: "Guru",
+              url: "https://www.guru.com/rss/jobs/",
+              type: "rss"
+            },
+            {
+              name: "PeoplePerHour",
+              url: "https://www.peopleperhour.com/rss",
+              type: "rss"
+            },
+            
+            // Tech Job Boards
+            {
+              name: "StackOverflow",
+              url: "https://stackoverflow.com/jobs/feed?r=true",
+              type: "rss"
+            },
+            {
+              name: "AngelList",
+              url: "https://angel.co/jobs.rss",
+              type: "rss"
+            },
+            {
+              name: "HackerNews",
+              url: "https://news.ycombinator.com/jobsrss",
+              type: "rss"
+            },
+            {
+              name: "GitHub Jobs",
+              url: "https://jobs.github.com/positions.json?description=freelance",
+              type: "api"
+            },
+            {
+              name: "Indeed",
+              url: "https://rss.indeed.com/rss?q=freelance+remote",
+              type: "rss"
+            },
+            
+            // Design & Creative
+            {
+              name: "Dribbble",
+              url: "https://dribbble.com/jobs.rss",
+              type: "rss"
+            },
+            {
+              name: "Behance",
+              url: "https://www.behance.net/joblist.rss",
+              type: "rss"
+            },
+            {
+              name: "99designs",
+              url: "https://99designs.com/jobs/rss",
+              type: "rss"
+            }
+          ];
+
+          async function scrapeRSS(source) {
+            try {
+              console.log(\`🔍 Scraping RSS: \${source.name}\`);
+              const feed = await parser.parseURL(source.url);
+              
+              const jobs = feed.items.slice(0, 10).map(item => ({
+                title: item.title || \`\${source.name} Opportunity\`,
+                company: item.creator || source.name,
+                description: item.contentSnippet || item.content || 'Click for more details',
+                url: item.link || \`https://\${source.name.toLowerCase().replace(' ', '')}.com\`,
+                source: source.name,
+                date: new Date().toISOString(),
+                expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                id: \`\${source.name}_\${Date.now()}_\${Math.random().toString(36).substr(2, 9)}\`
+              }));
+              
+              console.log(\`✅ Found \${jobs.length} jobs from \${source.name}\`);
+              return jobs;
+            } catch (error) {
+              console.log(\`❌ RSS Failed: \${source.name} - \${error.message}\`);
+              return [];
+            }
+          }
+
+          async function scrapeAPI(source) {
+            try {
+              console.log(\`🔍 Scraping API: \${source.name}\`);
+              const response = await axios.get(source.url);
+              const data = response.data;
+              
+              const jobs = data.slice(0, 10).map(item => ({
+                title: item.title || \`\${source.name} Position\`,
+                company: item.company || source.name,
+                description: item.description || 'Check the link for details',
+                url: item.url || item.link || \`https://\${source.name.toLowerCase().replace(' ', '')}.com\`,
+                source: source.name,
+                date: new Date(item.created_at || Date.now()).toISOString(),
+                expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                id: \`\${source.name}_\${Date.now()}_\${Math.random().toString(36).substr(2, 9)}\`
+              }));
+              
+              console.log(\`✅ Found \${jobs.length} jobs from \${source.name} API\`);
+              return jobs;
+            } catch (error) {
+              console.log(\`❌ API Failed: \${source.name} - \${error.message}\`);
+              return [];
+            }
+          }
+
+          async function main() {
+            console.log('🚀 Starting enhanced job scraper with 15+ sources...');
+            
+            let allJobs = [];
+            let successfulSources = 0;
+            
+            for (const source of SOURCES) {
+              let jobs = [];
+              
+              if (source.type === 'rss') {
+                jobs = await scrapeRSS(source);
+              } else if (source.type === 'api') {
+                jobs = await scrapeAPI(source);
+              }
+              
+              if (jobs.length > 0) {
+                allJobs = allJobs.concat(jobs);
+                successfulSources++;
+              }
+              
+              // Small delay to avoid rate limiting
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+            
+            // Remove duplicates based on title + company
+            const uniqueJobs = allJobs.filter((job, index, self) =>
+              index === self.findIndex(j => 
+                j.title === job.title && j.company === job.company
+              )
+            );
+            
+            // If few jobs found, add some samples
+            if (uniqueJobs.length < 10) {
+              console.log('⚠️  Few jobs found, adding samples...');
+              const sampleJobs = createSampleJobs();
+              uniqueJobs.push(...sampleJobs);
+            }
+            
+            // Save to file
+            fs.writeFileSync(jobsFile, JSON.stringify(uniqueJobs, null, 2));
+            console.log(\`🎉 SUCCESS: Saved \${uniqueJobs.length} unique jobs from \${successfulSources}/$\{SOURCES.length} sources\`);
+          }
+
+          function createSampleJobs() {
+            return [
+              {
+                title: "Senior Full Stack Developer",
+                company: "Tech Innovations Inc",
+                description: "Remote full-stack developer position with modern technologies. React, Node.js, and cloud experience required.",
+                url: "https://remoteok.io",
+                source: "Sample",
+                date: new Date().toISOString(),
+                expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                id: "sample_1"
+              },
+              {
+                title: "UX/UI Designer",
+                company: "Creative Digital Agency",
+                description: "Remote design position focusing on user experience and interface design for web applications.",
+                url: "https://dribbble.com",
+                source: "Sample", 
+                date: new Date().toISOString(),
+                expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                id: "sample_2"
+              },
+              {
+                title: "Digital Marketing Specialist",
+                company: "Growth Marketing Co",
+                description: "Remote marketing role with focus on SEO, content strategy, and social media management.",
+                url: "https://upwork.com",
+                source: "Sample",
+                date: new Date().toISOString(),
+                expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                id: "sample_3"
+              }
+            ];
+          }
+
+          main().catch(console.error);
+          EOF
+
+          node scraper.js
+
+      - name: Cleanup expired jobs
+        run: |
+          cat > cleanup.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          const jobsFile = path.join(__dirname, 'data', 'jobs.json');
+
+          if (fs.existsSync(jobsFile)) {
+            const jobs = JSON.parse(fs.readFileSync(jobsFile, 'utf8'));
+            const now = new Date();
+            const activeJobs = jobs.filter(job => {
+              try {
+                return new Date(job.expires) > now;
+              } catch (e) {
+                return true; // Keep job if date parsing fails
+              }
+            });
+            
+            if (activeJobs.length < jobs.length) {
+              fs.writeFileSync(jobsFile, JSON.stringify(activeJobs, null, 2));
+              console.log(\`🧹 Removed \${jobs.length - activeJobs.length} expired jobs\`);
+            } else {
+              console.log('✅ No expired jobs found');
+            }
+          } else {
+            console.log('📭 No jobs file found for cleanup');
+          }
+          EOF
+          node cleanup.js
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add data/jobs.json
-          git commit -m "Update jobs" || exit 0
+          git diff --cached --quiet || git commit -m "🤖 Enhanced update: 15+ sources"
           git push
