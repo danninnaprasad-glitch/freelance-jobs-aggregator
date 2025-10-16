@@ -5,17 +5,17 @@
     "description": "Looking for experienced React developer for full-time remote position. Must have 3+ years experience with modern frameworks.",
     "url": "https://remoteok.io/remote-jobs/123456-senior-react-developer",
     "source": "RemoteOK",
-    "date": "2024-01-15T10:00:00.000Z",
-    "expires": "2024-01-22T10:00:00.000Z"
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
   },
   {
     "title": "Full Stack JavaScript Engineer",
-    "company": "Digital Innovations Inc",
+    "company": "Digital Innovations Inc", 
     "description": "Remote full-stack role with Node.js, React, and MongoDB. Competitive salary and flexible hours.",
     "url": "https://weworkremotely.com/remote-jobs/789012-full-stack-javascript-engineer",
     "source": "WeWorkRemotely",
-    "date": "2024-01-15T10:00:00.000Z",
-    "expires": "2024-01-22T10:00:00.000Z"
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
   },
   {
     "title": "Frontend Developer (Vue.js)",
@@ -23,16 +23,52 @@
     "description": "Remote frontend developer position focusing on Vue.js applications. Join our growing team of professionals.",
     "url": "https://justremote.co/jobs/345678-frontend-developer-vuejs",
     "source": "JustRemote",
-    "date": "2024-01-15T10:00:00.000Z",
-    "expires": "2024-01-22T10:00:00.000Z"
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
   },
   {
     "title": "UX/UI Designer - Remote First",
     "company": "Creative Design Studio",
     "description": "Senior UI/UX designer needed for remote position. Figma expertise and portfolio required.",
-    "url": "https://dribbble.com/jobs/901234-ux-ui-designer-remote",
+    "url": "https://dribbble.com/jobs/901234-ux-ui-designer-remote", 
     "source": "Dribbble",
-    "date": "2024-01-15T10:00:00.000Z",
-    "expires": "2024-01-22T10:00:00.000Z"
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
+  },
+  {
+    "title": "Digital Marketing Manager",
+    "company": "Growth Marketing Agency",
+    "description": "Remote marketing role focusing on SEO, content strategy, and social media campaigns.",
+    "url": "https://upwork.com/jobs/567890-digital-marketing-manager",
+    "source": "Upwork",
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
+  },
+  {
+    "title": "DevOps Engineer - Cloud Infrastructure",
+    "company": "CloudTech Solutions",
+    "description": "Remote DevOps position with AWS, Docker, and Kubernetes. Infrastructure automation focus.",
+    "url": "https://flexjobs.com/jobs/234567-devops-engineer-cloud",
+    "source": "FlexJobs",
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
+  },
+  {
+    "title": "Mobile App Developer (React Native)",
+    "company": "AppInnovators LLC", 
+    "description": "Remote mobile developer role for React Native applications. Cross-platform development experience required.",
+    "url": "https://stackoverflow.com/jobs/345678-mobile-app-developer-react-native",
+    "source": "StackOverflow",
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
+  },
+  {
+    "title": "Backend Node.js Developer",
+    "company": "API First Company",
+    "description": "Remote backend developer specializing in Node.js and microservices architecture. REST API design experience required.",
+    "url": "https://angel.co/jobs/456789-backend-nodejs-developer",
+    "source": "AngelList",
+    "date": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
+    "expires": "$(date -u -d "+7 days" +"%Y-%m-%dT%H:%M:%S.000Z")"
   }
 ]
